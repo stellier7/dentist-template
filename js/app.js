@@ -20,7 +20,7 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   // Animation system variables (declared early to avoid TDZ errors)
-  const DEBUG_MODE = true; // Set to false to remove debug overlay
+  const DEBUG_MODE = false; // Set to false to remove debug overlay
   let animationObserver = null;
   let debugLog = [];
 
@@ -1140,7 +1140,7 @@
 
     function scrollToNext() {
       const itemWidth = scroller.querySelector('.gallery__item')?.offsetWidth || 0;
-      const gap = 17;
+      const gap = 10;
       scroller.scrollBy({ 
         left: itemWidth + gap, 
         behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' 
@@ -1149,7 +1149,7 @@
 
     function scrollToPrev() {
       const itemWidth = scroller.querySelector('.gallery__item')?.offsetWidth || 0;
-      const gap = 17;
+      const gap = 10;
       scroller.scrollBy({ 
         left: -(itemWidth + gap), 
         behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' 
@@ -1161,6 +1161,73 @@
     scroller.addEventListener('scroll', updateButtons, { passive: true });
     
     updateButtons();
+    
+    // Auto-scroll gallery continuously
+    initGalleryAutoScroll(scroller);
+  }
+
+  // -------------------------------------------------------------------------
+  // GALLERY AUTO-SCROLL
+  // -------------------------------------------------------------------------
+  function initGalleryAutoScroll(scroller) {
+    if (!scroller || prefersReducedMotion.matches) return;
+    
+    const items = scroller.querySelectorAll('.gallery__item');
+    if (items.length === 0) return;
+    
+    let autoScrollInterval;
+    let isPaused = false;
+    
+    function startAutoScroll() {
+      if (isPaused) return;
+      
+      autoScrollInterval = setInterval(() => {
+        if (isPaused) return;
+        
+        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+        const currentScroll = scroller.scrollLeft;
+        
+        // If we're at the end, loop back to start
+        if (currentScroll >= maxScroll - 10) {
+          scroller.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll by one item width + gap
+          const itemWidth = items[0]?.offsetWidth || 0;
+          const gap = 10;
+          scroller.scrollBy({ left: itemWidth + gap, behavior: 'smooth' });
+        }
+      }, 3000); // Scroll every 3 seconds
+    }
+    
+    function pauseAutoScroll() {
+      isPaused = true;
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+      }
+    }
+    
+    function resumeAutoScroll() {
+      isPaused = false;
+      startAutoScroll();
+    }
+    
+    // Pause on hover/touch
+    scroller.addEventListener('mouseenter', pauseAutoScroll);
+    scroller.addEventListener('mouseleave', resumeAutoScroll);
+    scroller.addEventListener('touchstart', pauseAutoScroll, { passive: true });
+    
+    // Pause when user manually scrolls
+    let scrollTimeout;
+    scroller.addEventListener('scroll', () => {
+      pauseAutoScroll();
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        resumeAutoScroll();
+      }, 5000); // Resume after 5 seconds of no manual scrolling
+    }, { passive: true });
+    
+    // Start auto-scrolling
+    startAutoScroll();
   }
 
   // -------------------------------------------------------------------------
