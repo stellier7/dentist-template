@@ -19,6 +19,11 @@
   const MQ_DESKTOP_SERVICES = window.matchMedia("(min-width: 768px)");
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  // Animation system variables (declared early to avoid TDZ errors)
+  const DEBUG_MODE = true; // Set to false to remove debug overlay
+  let animationObserver = null;
+  let debugLog = [];
+
   /** @type {"en"|"es"} */
   let lang = getInitialLang();
 
@@ -825,10 +830,6 @@
   // =========================================================================
   // SCROLL ANIMATIONS & EFFECTS
   // =========================================================================
-
-  const DEBUG_MODE = true; // Set to false to remove debug overlay
-  let animationObserver = null;
-  let debugLog = [];
 
   function initAnimations() {
     if (prefersReducedMotion.matches) {
