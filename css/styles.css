@@ -103,6 +103,8 @@ body {
     var(--gradient-body-1),
     var(--gradient-body-2),
     var(--gradient-body-3);
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 img {
@@ -444,11 +446,12 @@ body.nav-open {
   align-items: end;
   overflow: hidden;
   color: var(--color-white);
+  overscroll-behavior-x: none;
 }
 
 .hero__media {
   position: absolute;
-  inset: -12% 0 -12% 0;
+  inset: -12% -5% -12% -5%;
   z-index: -2;
   will-change: transform;
   transform: translate3d(0, 0, 0);
@@ -820,12 +823,13 @@ body.nav-open {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  padding: 0.25rem max(1rem, calc((100% - var(--container)) / 2)) 1rem;
+  padding: 0.25rem max(1rem, calc((100% - var(--container)) / 2));
   scrollbar-width: thin;
 }
 
 .gallery__item {
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-md);
