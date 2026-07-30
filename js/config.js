@@ -240,14 +240,14 @@ const config = {
   // REQUIRED — at least one dentist. Empty array hides the whole section.
   dentists: [
     {
-      name: "Dra. Elena Morales",
+      name: "Dr. Carlos Mendoza",
       title: {
         en: "Lead Dentist · DDS",
         es: "Dentista Principal · DDS",
       },
       bio: {
-        en: "Dr. Morales has cared for Miami families for over a decade. She believes great dentistry starts with listening — and that every visit should feel calm, clear, and kind.",
-        es: "La Dra. Morales ha cuidado a familias de Miami por más de una década. Cree que una gran odontología empieza escuchando — y que cada visita debe sentirse calmada, clara y cercana.",
+        en: "Dr. Mendoza has cared for Miami families for over a decade. He believes great dentistry starts with listening — and that every visit should feel calm, clear, and kind.",
+        es: "El Dr. Mendoza ha cuidado a familias de Miami por más de una década. Cree que una gran odontología empieza escuchando — y que cada visita debe sentirse calmada, clara y cercana.",
       },
       // OPTIONAL — path/URL; leave blank for initials placeholder
       // Demo template image included — replace per client
