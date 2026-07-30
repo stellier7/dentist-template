@@ -580,7 +580,7 @@
         
         currentIndex = (currentIndex + 1) % cards.length;
         scrollToCard(currentIndex);
-      }, 4000); // Scroll every 4 seconds (longer than gallery for reading time)
+      }, 3500); // Scroll every 3.5 seconds
     }
     
     function pauseAutoScroll() {
@@ -1327,7 +1327,7 @@
         
         currentIndex = (currentIndex + 1) % items.length;
         scrollToIndex(currentIndex);
-      }, 3500); // Scroll every 3.5 seconds
+      }, 3000); // Scroll every 3 seconds
     }
     
     function pauseAutoScroll() {
