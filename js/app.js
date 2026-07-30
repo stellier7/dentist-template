@@ -544,6 +544,88 @@
       },
       { passive: true }
     );
+    
+    // Auto-scroll testimonials
+    initTestimonialsAutoScroll(track);
+  }
+
+  // -------------------------------------------------------------------------
+  // TESTIMONIALS AUTO-SCROLL
+  // -------------------------------------------------------------------------
+  function initTestimonialsAutoScroll(track) {
+    if (!track || prefersReducedMotion.matches) return;
+    
+    const cards = track.querySelectorAll('.testimonial-card');
+    if (cards.length === 0) return;
+    
+    let autoScrollInterval;
+    let isPaused = false;
+    let currentIndex = 0;
+    
+    function scrollToCard(index) {
+      const card = cards[index];
+      if (!card) return;
+      
+      track.scrollTo({
+        left: card.offsetLeft,
+        behavior: 'smooth'
+      });
+    }
+    
+    function startAutoScroll() {
+      if (isPaused) return;
+      
+      autoScrollInterval = setInterval(() => {
+        if (isPaused) return;
+        
+        currentIndex = (currentIndex + 1) % cards.length;
+        scrollToCard(currentIndex);
+      }, 4000); // Scroll every 4 seconds (longer than gallery for reading time)
+    }
+    
+    function pauseAutoScroll() {
+      isPaused = true;
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+      }
+    }
+    
+    function resumeAutoScroll() {
+      isPaused = false;
+      startAutoScroll();
+    }
+    
+    // Pause on hover/touch
+    track.addEventListener('mouseenter', pauseAutoScroll);
+    track.addEventListener('mouseleave', resumeAutoScroll);
+    track.addEventListener('touchstart', pauseAutoScroll, { passive: true });
+    
+    // Pause when user manually scrolls
+    let scrollTimeout;
+    track.addEventListener('scroll', () => {
+      pauseAutoScroll();
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        // Update currentIndex based on current scroll position
+        const cards = Array.from(track.querySelectorAll('.testimonial-card'));
+        let closestIndex = 0;
+        let closestDist = Infinity;
+        
+        cards.forEach((card, i) => {
+          const dist = Math.abs(card.offsetLeft - track.scrollLeft);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIndex = i;
+          }
+        });
+        
+        currentIndex = closestIndex;
+        resumeAutoScroll();
+      }, 6000); // Resume after 6 seconds (longer for testimonials since they're text-heavy)
+    }, { passive: true });
+    
+    // Start auto-scrolling
+    startAutoScroll();
   }
 
   // -------------------------------------------------------------------------
