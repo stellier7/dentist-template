@@ -31,10 +31,10 @@
   initHeaderScroll();
   initTestimonialsCarousel();
   
-  // Animations disabled for now
-  // setTimeout(() => {
-  //   initAnimations();
-  // }, 100);
+  // Initialize animations after content renders
+  setTimeout(() => {
+    initAnimations();
+  }, 100);
 
   // Re-bind accordion behavior when breakpoint flips
   MQ_DESKTOP_SERVICES.addEventListener("change", () => {
@@ -115,7 +115,7 @@
     renderFooter();
     renderStickyBar();
     applyStaticI18n();
-    refreshReveals();
+    refreshAnimations();
   }
 
   function applyStaticI18n() {
@@ -819,136 +819,145 @@
 
   // -------------------------------------------------------------------------
   // Parallax — transform-based (iOS Safari friendly)
-  // Avoids background-attachment: fixed which causes jank/bugs on iOS.
-  // Uses rAF + translate3d; disabled when prefers-reduced-motion.
   // -------------------------------------------------------------------------
-  function initParallax() {
-    const hero = document.querySelector("[data-hero]");
-    const media = document.querySelector("[data-hero-media]");
+  // NOTE: Parallax is now handled by initFixedHeroBackground() in the animation system above
+
+  // =========================================================================
+  // SCROLL ANIMATIONS & EFFECTS
+  // =========================================================================
+
+  const DEBUG_MODE = true; // Set to false to remove debug overlay
+  let animationObserver = null;
+  let debugLog = [];
+
+  function initAnimations() {
+    if (prefersReducedMotion.matches) {
+      console.log('[Animations] Respecting prefers-reduced-motion');
+      return;
+    }
+
+    logDebug('Animation system initializing...');
+    
+    // 1. Hero entrance animation (on load, not scroll-triggered)
+    initHeroEntrance();
+    
+    // 2. Fixed hero background effect
+    initFixedHeroBackground();
+    
+    // 3. Scroll-triggered animations for all sections
+    initScrollAnimations();
+    
+    // 4. Gallery navigation
+    initGalleryNav();
+    
+    // 5. Show debug overlay if enabled
+    if (DEBUG_MODE) {
+      createDebugOverlay();
+    }
+    
+    logDebug('✓ Animation system ready');
+  }
+
+  // -------------------------------------------------------------------------
+  // HERO - Fixed background + slide-in entrance
+  // -------------------------------------------------------------------------
+  function initHeroEntrance() {
+    // Trigger hero content slide-in from right
+    setTimeout(() => {
+      document.body.classList.add('hero-loaded');
+      logDebug('hero-content: slide-right FIRED');
+    }, 150);
+  }
+
+  function initFixedHeroBackground() {
+    // JS-based fixed background (iOS Safari compatible)
+    // The background stays put while content scrolls over it
+    const hero = document.querySelector('[data-hero]');
+    const media = document.querySelector('[data-hero-media]');
+    
     if (!hero || !media) return;
 
     let ticking = false;
     let active = true;
 
-    // Pause parallax work when hero is offscreen
+    // Optimize with IntersectionObserver
     const io = new IntersectionObserver(
       ([entry]) => {
         active = entry.isIntersecting;
         if (!active) {
-          media.style.transform = "translate3d(0, 0, 0)";
+          media.style.transform = 'translate3d(0, 0, 0)';
         }
       },
-      { rootMargin: "20% 0px" }
+      { rootMargin: '50% 0px' }
     );
     io.observe(hero);
 
-    function update() {
+    function updateBackground() {
       ticking = false;
       if (!active || prefersReducedMotion.matches) {
-        media.style.transform = "translate3d(0, 0, 0)";
+        media.style.transform = 'translate3d(0, 0, 0)';
         return;
       }
 
       const rect = hero.getBoundingClientRect();
-      const heroHeight = rect.height || 1;
-      // Progress while hero is in view: 0 at top, increases as user scrolls down
-      const scrolled = Math.min(Math.max(-rect.top, 0), heroHeight);
-      // Slow factor — media drifts ~35% of scroll distance
-      const offset = scrolled * 0.35;
+      const viewportHeight = window.innerHeight;
+      
+      // Keep background fixed by counteracting scroll
+      // This creates the "fixed" effect without CSS background-attachment
+      const scrolled = Math.max(0, -rect.top);
+      const progress = Math.min(scrolled / viewportHeight, 1);
+      
+      // Slight parallax on the background (moves slower than scroll)
+      const offset = scrolled * 0.5;
       media.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
     }
 
     function onScroll() {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(update);
+      requestAnimationFrame(updateBackground);
     }
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    // iOS Safari: also listen to visualViewport when available
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", onScroll, { passive: true });
-      window.visualViewport.addEventListener("scroll", onScroll, { passive: true });
-    }
-
-    update();
-  }
-
-  // =========================================================================
-  // DISABLED: ANIMATION SYSTEM
-  // =========================================================================
-
-  let animationObserver = null;
-
-  function initAnimations() {
-    console.log('[Animations] DISABLED - All animations turned off');
-    // Just init gallery navigation
-    initGalleryNav();
-  }
-
-  // -------------------------------------------------------------------------
-  // 1. HERO - Load animations (not scroll-triggered)
-  // -------------------------------------------------------------------------
-  function initHeroAnimations() {
-    // Hero elements already have data-animate in HTML, just trigger them
-    const heroElements = document.querySelectorAll('.hero__content [data-animate]');
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     
-    console.log('[Animations] Found', heroElements.length, 'hero elements to animate');
-    
-    // Trigger animations on load
-    setTimeout(() => {
-      heroElements.forEach(el => {
-        el.classList.add('in-view');
-        console.log('[Animations] Hero element animated:', el.className);
-        // Remove will-change after animation
-        setTimeout(() => el.classList.add('animated'), 650);
-      });
-    }, 150);
-
-    console.log('[Animations] Hero load animations triggered');
+    updateBackground();
   }
 
   // -------------------------------------------------------------------------
-  // 2. SCROLL ANIMATIONS - IntersectionObserver
+  // SCROLL-TRIGGERED ANIMATIONS
   // -------------------------------------------------------------------------
   function initScrollAnimations() {
-    // Set up observer with 20% threshold
     animationObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !entry.target.classList.contains('in-view')) {
+            const animType = entry.target.getAttribute('data-animate') || 'unknown';
+            const label = entry.target.getAttribute('data-anim-label') || animType;
+            
             entry.target.classList.add('in-view');
+            logDebug(`${label}: FIRED`);
             
             // Remove will-change after animation completes
             setTimeout(() => {
               entry.target.classList.add('animated');
-            }, 650);
+            }, 700);
 
-            // Unobserve after animating
+            // Unobserve after animating (one-time animation)
             animationObserver.unobserve(entry.target);
-            
-            console.log('[Animations] Triggered:', entry.target.getAttribute('data-animate'));
           }
         });
       },
       {
-        threshold: 0.2,
-        rootMargin: '0px'
+        threshold: 0.15,
+        rootMargin: '0px 0px -10% 0px'
       }
     );
 
-    // Observe all elements that need scroll animations
-    observeAllAnimatedElements();
-    
-    console.log('[Animations] Scroll observer initialized');
-  }
-
-  function observeAllAnimatedElements() {
-    // Find and set up animations for each section
+    // Set up all scroll animations
     setupTrustBarAnimations();
     setupServicesAnimations();
-    setupDentistAnimations();
+    setupDentistsAnimations();
     setupGalleryAnimations();
     setupTestimonialsAnimations();
     setupInsuranceAnimations();
@@ -958,68 +967,67 @@
 
   // TRUST BAR - Staggered fade up
   function setupTrustBarAnimations() {
-    const trustItems = document.querySelectorAll('.trust__list li');
+    const trustItems = document.querySelectorAll('.trust__list .trust__item');
     trustItems.forEach((item, i) => {
       item.setAttribute('data-animate', 'slide-up');
-      item.style.transitionDelay = `${i * 100}ms`;
-      animationObserver.observe(item);
-    });
-  }
-
-  // SERVICES - Alternate slide direction
-  function setupServicesAnimations() {
-    const serviceCards = document.querySelectorAll('.service-card');
-    serviceCards.forEach((card, i) => {
-      const direction = i % 2 === 0 ? 'slide-left' : 'slide-right';
-      card.setAttribute('data-animate', direction);
-      card.style.transitionDelay = `${i * 120}ms`;
-      animationObserver.observe(card);
-    });
-  }
-
-  // DENTIST - Photo from left, text from right with offset
-  function setupDentistAnimations() {
-    const dentistPhoto = document.querySelector('.dentist-card__photo');
-    const dentistBody = document.querySelector('.dentist-card__body');
-    
-    if (dentistPhoto) {
-      dentistPhoto.setAttribute('data-animate', 'slide-left');
-      animationObserver.observe(dentistPhoto);
-    }
-    
-    if (dentistBody) {
-      dentistBody.setAttribute('data-animate', 'slide-right');
-      dentistBody.style.transitionDelay = '150ms';
-      animationObserver.observe(dentistBody);
-    }
-  }
-
-  // GALLERY - Fade scale staggered
-  function setupGalleryAnimations() {
-    const galleryItems = document.querySelectorAll('.gallery__item');
-    galleryItems.forEach((item, i) => {
-      item.setAttribute('data-animate', 'fade-scale');
+      item.setAttribute('data-anim-label', `trust-item-${i + 1}`);
       item.style.transitionDelay = `${i * 80}ms`;
       animationObserver.observe(item);
     });
   }
 
-  // TESTIMONIALS - Fade up staggered
+  // SERVICES - Alternating left/right with stagger
+  function setupServicesAnimations() {
+    const serviceCards = document.querySelectorAll('.service-card');
+    serviceCards.forEach((card, i) => {
+      const direction = i % 2 === 0 ? 'slide-left' : 'slide-right';
+      card.setAttribute('data-animate', direction);
+      card.setAttribute('data-anim-label', `service-card-${i + 1}-${direction}`);
+      card.style.transitionDelay = `${i * 100}ms`;
+      animationObserver.observe(card);
+    });
+  }
+
+  // DENTISTS - Entire card slides in
+  function setupDentistsAnimations() {
+    const dentistCards = document.querySelectorAll('.dentist-card');
+    dentistCards.forEach((card, i) => {
+      const direction = i % 2 === 0 ? 'slide-left' : 'slide-right';
+      card.setAttribute('data-animate', direction);
+      card.setAttribute('data-anim-label', `dentist-card-${i + 1}`);
+      animationObserver.observe(card);
+    });
+  }
+
+  // GALLERY - Scale + fade with stagger
+  function setupGalleryAnimations() {
+    const galleryItems = document.querySelectorAll('.gallery__item');
+    galleryItems.forEach((item, i) => {
+      item.setAttribute('data-animate', 'fade-scale');
+      item.setAttribute('data-anim-label', `gallery-item-${i + 1}`);
+      item.style.transitionDelay = `${Math.min(i * 60, 400)}ms`;
+      animationObserver.observe(item);
+    });
+  }
+
+  // TESTIMONIALS - Fade up with stagger
   function setupTestimonialsAnimations() {
     const testimonialCards = document.querySelectorAll('.testimonial-card');
     testimonialCards.forEach((card, i) => {
       card.setAttribute('data-animate', 'slide-up');
+      card.setAttribute('data-anim-label', `testimonial-${i + 1}`);
       card.style.transitionDelay = `${i * 120}ms`;
       animationObserver.observe(card);
     });
   }
 
-  // INSURANCE - Fade as group
+  // INSURANCE - Simple fade for the entire grid
   function setupInsuranceAnimations() {
-    const logoList = document.querySelector('.insurance__logos');
-    if (logoList) {
-      logoList.setAttribute('data-animate', 'fade');
-      animationObserver.observe(logoList);
+    const logoGrid = document.querySelector('.insurance__logos');
+    if (logoGrid) {
+      logoGrid.setAttribute('data-animate', 'fade');
+      logoGrid.setAttribute('data-anim-label', 'insurance-logos');
+      animationObserver.observe(logoGrid);
     }
   }
 
@@ -1028,6 +1036,7 @@
     const locationCard = document.querySelector('.location__card');
     if (locationCard) {
       locationCard.setAttribute('data-animate', 'slide-up');
+      locationCard.setAttribute('data-anim-label', 'location-card');
       animationObserver.observe(locationCard);
     }
   }
@@ -1035,22 +1044,83 @@
   // SECTION HEADERS - Fade up
   function setupSectionHeaders() {
     const headers = document.querySelectorAll('.section__header');
-    headers.forEach(header => {
+    headers.forEach((header, i) => {
+      const section = header.closest('[data-section]');
+      const sectionName = section ? section.getAttribute('data-section') : `section-${i}`;
       header.setAttribute('data-animate', 'slide-up');
+      header.setAttribute('data-anim-label', `${sectionName}-header`);
       animationObserver.observe(header);
     });
   }
 
-  // Re-observe new elements after content updates (language change, etc.)
+  // Re-initialize animations after content changes (language swap)
   function refreshAnimations() {
     if (!animationObserver || prefersReducedMotion.matches) return;
-    observeAllAnimatedElements();
+    
+    // Clear previous animations
+    document.querySelectorAll('[data-animate]').forEach(el => {
+      el.classList.remove('in-view', 'animated');
+      el.style.transitionDelay = '';
+    });
+    
+    // Re-setup
+    setupTrustBarAnimations();
+    setupServicesAnimations();
+    setupDentistsAnimations();
+    setupGalleryAnimations();
+    setupTestimonialsAnimations();
+    setupInsuranceAnimations();
+    setupLocationAnimations();
+    setupSectionHeaders();
   }
 
-  // Note: Hero parallax is handled by existing initParallax() function below
+  // -------------------------------------------------------------------------
+  // DEBUG OVERLAY
+  // -------------------------------------------------------------------------
+  function logDebug(message) {
+    console.log(`[Animations] ${message}`);
+    if (DEBUG_MODE) {
+      debugLog.push({
+        message,
+        time: Date.now(),
+        isFired: message.includes('FIRED')
+      });
+      updateDebugOverlay();
+    }
+  }
+
+  function createDebugOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'anim-debug';
+    overlay.innerHTML = `
+      <div class="debug-title">🎬 Animation Debug</div>
+      <div class="debug-content"></div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // Instructions
+    console.log('%c═══════════════════════════════════════', 'color: #fbbf24');
+    console.log('%c🎬 ANIMATION DEBUG MODE ACTIVE', 'color: #4ade80; font-weight: bold; font-size: 14px');
+    console.log('%cTo disable: Open js/app.js and set DEBUG_MODE = false', 'color: #60a5fa');
+    console.log('%c═══════════════════════════════════════', 'color: #fbbf24');
+  }
+
+  function updateDebugOverlay() {
+    const content = document.querySelector('#anim-debug .debug-content');
+    if (!content) return;
+    
+    // Show last 12 entries
+    const recent = debugLog.slice(-12);
+    content.innerHTML = recent
+      .map(entry => {
+        const className = entry.isFired ? 'debug-log fired' : 'debug-log';
+        return `<div class="${className}">→ ${entry.message}</div>`;
+      })
+      .join('');
+  }
 
   // -------------------------------------------------------------------------
-  // 4. GALLERY NAVIGATION
+  // GALLERY NAVIGATION
   // -------------------------------------------------------------------------
   function initGalleryNav() {
     const scroller = document.querySelector('[data-gallery-scroller]');
@@ -1070,13 +1140,19 @@
     function scrollToNext() {
       const itemWidth = scroller.querySelector('.gallery__item')?.offsetWidth || 0;
       const gap = 17;
-      scroller.scrollBy({ left: itemWidth + gap, behavior: 'smooth' });
+      scroller.scrollBy({ 
+        left: itemWidth + gap, 
+        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' 
+      });
     }
 
     function scrollToPrev() {
       const itemWidth = scroller.querySelector('.gallery__item')?.offsetWidth || 0;
       const gap = 17;
-      scroller.scrollBy({ left: -(itemWidth + gap), behavior: 'smooth' });
+      scroller.scrollBy({ 
+        left: -(itemWidth + gap), 
+        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' 
+      });
     }
 
     nextBtn.addEventListener('click', scrollToNext);

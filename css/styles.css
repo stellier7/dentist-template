@@ -1269,9 +1269,124 @@ body.nav-open {
 }
 
 /* ---------------------------------------------------------------------------
-   ANIMATIONS - DISABLED FOR NOW
+   SCROLL ANIMATIONS
    --------------------------------------------------------------------------- */
-/* No animations - everything visible by default */
+
+/* Base animation properties */
+[data-animate] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition: opacity 650ms var(--ease-out),
+              transform 650ms var(--ease-out);
+  will-change: opacity, transform;
+}
+
+/* Initial hidden states (before .in-view is added) */
+[data-animate]:not(.in-view):not(.animated) {
+  opacity: 0;
+}
+
+/* Slide up (default) */
+[data-animate="slide-up"]:not(.in-view):not(.animated) {
+  transform: translate3d(0, 40px, 0);
+}
+
+/* Slide from left */
+[data-animate="slide-left"]:not(.in-view):not(.animated) {
+  transform: translate3d(-60px, 0, 0);
+}
+
+/* Slide from right */
+[data-animate="slide-right"]:not(.in-view):not(.animated) {
+  transform: translate3d(60px, 0, 0);
+}
+
+/* Fade scale (for gallery) */
+[data-animate="fade-scale"]:not(.in-view):not(.animated) {
+  transform: scale(0.88);
+}
+
+/* Pure fade (for insurance) */
+[data-animate="fade"]:not(.in-view):not(.animated) {
+  transform: none;
+}
+
+/* When in view - animate to visible state */
+[data-animate].in-view {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+
+/* After animation completes, remove will-change for performance */
+[data-animate].animated {
+  will-change: auto;
+}
+
+/* Hero content initial state (animates on page load, not scroll) */
+.hero__content > * {
+  opacity: 0;
+  transform: translate3d(60px, 0, 0);
+  transition: opacity 680ms var(--ease-out),
+              transform 680ms var(--ease-out);
+}
+
+/* Hero content visible state */
+body.hero-loaded .hero__content > * {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Stagger hero content animations */
+body.hero-loaded .hero__badge { transition-delay: 100ms; }
+body.hero-loaded .hero__title { transition-delay: 200ms; }
+body.hero-loaded .hero__tagline { transition-delay: 320ms; }
+body.hero-loaded .hero__actions { transition-delay: 440ms; }
+
+/* Debug overlay */
+#anim-debug {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  color: #4ade80;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  max-width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+#anim-debug .debug-title {
+  color: #fbbf24;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+}
+
+#anim-debug .debug-log {
+  margin: 0.15rem 0;
+  color: #4ade80;
+}
+
+#anim-debug .debug-log.fired {
+  color: #60a5fa;
+}
+
+@media (max-width: 640px) {
+  #anim-debug {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    max-width: 220px;
+    max-height: 240px;
+  }
+}
 
 /* ---------------------------------------------------------------------------
    Tablet / Desktop nav & sticky bar
