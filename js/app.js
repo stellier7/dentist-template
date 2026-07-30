@@ -35,6 +35,7 @@
   bindGlobalUI();
   initHeaderScroll();
   initTestimonialsCarousel();
+  initDentistsCarousel();
   
   // Initialize animations after content renders
   setTimeout(() => {
@@ -399,6 +400,14 @@
     }
 
     section.hidden = false;
+    
+    // Enable horizontal scroll for multiple dentists
+    if (dentists.length > 1) {
+      grid.setAttribute('data-scrollable', 'true');
+    } else {
+      grid.removeAttribute('data-scrollable');
+    }
+    
     grid.innerHTML = dentists
       .map((d) => {
         const initials = (d.name || "")
@@ -424,6 +433,88 @@
         </article>`;
       })
       .join("");
+  }
+
+  // -------------------------------------------------------------------------
+  // Dentists Carousel (for multiple dentists)
+  // -------------------------------------------------------------------------
+  function initDentistsCarousel() {
+    const grid = document.querySelector("[data-dentists-grid]");
+    if (!grid || grid.getAttribute('data-scrollable') !== 'true') return;
+    
+    const cards = grid.querySelectorAll('.dentist-card');
+    if (cards.length <= 1) return;
+    
+    let autoScrollInterval = null;
+    let isPaused = false;
+    let currentIndex = 0;
+    
+    function scrollToCard(index) {
+      const card = cards[index];
+      if (!card) return;
+      
+      grid.scrollTo({
+        left: card.offsetLeft,
+        behavior: 'smooth'
+      });
+    }
+    
+    function startAutoScroll() {
+      if (isPaused || autoScrollInterval) return;
+      
+      autoScrollInterval = setInterval(() => {
+        if (isPaused) return;
+        
+        currentIndex = (currentIndex + 1) % cards.length;
+        scrollToCard(currentIndex);
+      }, 5000); // Scroll every 5 seconds (longer for bio reading)
+    }
+    
+    function pauseAutoScroll() {
+      isPaused = true;
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }
+    
+    function resumeAutoScroll() {
+      isPaused = false;
+      startAutoScroll();
+    }
+    
+    // Pause on hover/touch
+    grid.addEventListener('mouseenter', pauseAutoScroll);
+    grid.addEventListener('mouseleave', resumeAutoScroll);
+    grid.addEventListener('touchstart', pauseAutoScroll, { passive: true });
+    
+    // Pause when user manually scrolls
+    let scrollTimeout;
+    grid.addEventListener('scroll', () => {
+      pauseAutoScroll();
+      clearTimeout(scrollTimeout);
+      
+      // Update current index based on scroll position
+      scrollTimeout = setTimeout(() => {
+        const scrollLeft = grid.scrollLeft;
+        let closestIndex = 0;
+        let closestDist = Infinity;
+        
+        cards.forEach((card, i) => {
+          const dist = Math.abs(card.offsetLeft - scrollLeft);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIndex = i;
+          }
+        });
+        
+        currentIndex = closestIndex;
+        resumeAutoScroll();
+      }, 7000); // Resume after 7 seconds (extra time for reading bios)
+    }, { passive: true });
+    
+    // Start auto-scrolling
+    startAutoScroll();
   }
 
   // -------------------------------------------------------------------------

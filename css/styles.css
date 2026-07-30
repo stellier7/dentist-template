@@ -749,6 +749,21 @@ body.nav-open {
   gap: 1.25rem;
 }
 
+/* When multiple dentists, enable horizontal scroll */
+.dentists__grid[data-scrollable="true"] {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 1rem;
+}
+
+.dentists__grid[data-scrollable="true"]::-webkit-scrollbar {
+  display: none;
+}
+
 .dentist-card {
   display: grid;
   gap: 1.25rem;
@@ -758,6 +773,13 @@ body.nav-open {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 220ms ease, transform 220ms var(--ease-out);
+}
+
+/* When scrollable, make cards full-width */
+.dentists__grid[data-scrollable="true"] .dentist-card {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .dentist-card__photo {
