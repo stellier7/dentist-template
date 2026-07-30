@@ -1221,21 +1221,63 @@
     }
 
     function scrollToNext() {
-      const itemWidth = scroller.querySelector('.gallery__item')?.offsetWidth || 0;
-      const gap = 10;
-      scroller.scrollBy({ 
-        left: itemWidth + gap, 
-        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' 
-      });
+      const items = scroller.querySelectorAll('.gallery__item');
+      if (items.length === 0) return;
+      
+      const scrollerCenter = scroller.scrollLeft + (scroller.clientWidth / 2);
+      let nextItem = null;
+      
+      // Find the next item after the current center position
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+        if (itemCenter > scrollerCenter + 50) {
+          nextItem = item;
+          break;
+        }
+      }
+      
+      if (nextItem) {
+        const itemLeft = nextItem.offsetLeft;
+        const itemWidth = nextItem.offsetWidth;
+        const scrollerWidth = scroller.clientWidth;
+        const scrollPosition = itemLeft - (scrollerWidth / 2) + (itemWidth / 2);
+        
+        scroller.scrollTo({
+          left: Math.max(0, scrollPosition),
+          behavior: prefersReducedMotion.matches ? 'auto' : 'smooth'
+        });
+      }
     }
 
     function scrollToPrev() {
-      const itemWidth = scroller.querySelector('.gallery__item')?.offsetWidth || 0;
-      const gap = 10;
-      scroller.scrollBy({ 
-        left: -(itemWidth + gap), 
-        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' 
-      });
+      const items = scroller.querySelectorAll('.gallery__item');
+      if (items.length === 0) return;
+      
+      const scrollerCenter = scroller.scrollLeft + (scroller.clientWidth / 2);
+      let prevItem = null;
+      
+      // Find the previous item before the current center position
+      for (let i = items.length - 1; i >= 0; i--) {
+        const item = items[i];
+        const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+        if (itemCenter < scrollerCenter - 50) {
+          prevItem = item;
+          break;
+        }
+      }
+      
+      if (prevItem) {
+        const itemLeft = prevItem.offsetLeft;
+        const itemWidth = prevItem.offsetWidth;
+        const scrollerWidth = scroller.clientWidth;
+        const scrollPosition = itemLeft - (scrollerWidth / 2) + (itemWidth / 2);
+        
+        scroller.scrollTo({
+          left: Math.max(0, scrollPosition),
+          behavior: prefersReducedMotion.matches ? 'auto' : 'smooth'
+        });
+      }
     }
 
     nextBtn.addEventListener('click', scrollToNext);
@@ -1249,7 +1291,7 @@
   }
 
   // -------------------------------------------------------------------------
-  // GALLERY AUTO-SCROLL
+  // GALLERY AUTO-SCROLL - Rebuilt for reliability
   // -------------------------------------------------------------------------
   function initGalleryAutoScroll(scroller) {
     if (!scroller || prefersReducedMotion.matches) return;
@@ -1257,34 +1299,42 @@
     const items = scroller.querySelectorAll('.gallery__item');
     if (items.length === 0) return;
     
-    let autoScrollInterval;
+    let autoScrollInterval = null;
     let isPaused = false;
+    let currentIndex = 0;
+    
+    function scrollToIndex(index) {
+      const item = items[index];
+      if (!item) return;
+      
+      // Calculate scroll position to center the item
+      const itemLeft = item.offsetLeft;
+      const itemWidth = item.offsetWidth;
+      const scrollerWidth = scroller.clientWidth;
+      const scrollPosition = itemLeft - (scrollerWidth / 2) + (itemWidth / 2);
+      
+      scroller.scrollTo({
+        left: Math.max(0, scrollPosition),
+        behavior: 'smooth'
+      });
+    }
     
     function startAutoScroll() {
-      if (isPaused) return;
+      if (isPaused || autoScrollInterval) return;
       
       autoScrollInterval = setInterval(() => {
         if (isPaused) return;
         
-        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-        const currentScroll = scroller.scrollLeft;
-        
-        // If we're at the end, loop back to start
-        if (currentScroll >= maxScroll - 10) {
-          scroller.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          // Scroll by one item width + gap
-          const itemWidth = items[0]?.offsetWidth || 0;
-          const gap = 10;
-          scroller.scrollBy({ left: itemWidth + gap, behavior: 'smooth' });
-        }
-      }, 3000); // Scroll every 3 seconds
+        currentIndex = (currentIndex + 1) % items.length;
+        scrollToIndex(currentIndex);
+      }, 3500); // Scroll every 3.5 seconds
     }
     
     function pauseAutoScroll() {
       isPaused = true;
       if (autoScrollInterval) {
         clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
       }
     }
     
@@ -1303,9 +1353,25 @@
     scroller.addEventListener('scroll', () => {
       pauseAutoScroll();
       clearTimeout(scrollTimeout);
+      
+      // Update current index based on scroll position
       scrollTimeout = setTimeout(() => {
+        const scrollerCenter = scroller.scrollLeft + (scroller.clientWidth / 2);
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+        
+        items.forEach((item, index) => {
+          const itemCenter = item.offsetLeft + (item.offsetWidth / 2);
+          const distance = Math.abs(scrollerCenter - itemCenter);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = index;
+          }
+        });
+        
+        currentIndex = closestIndex;
         resumeAutoScroll();
-      }, 5000); // Resume after 5 seconds of no manual scrolling
+      }, 5000); // Resume after 5 seconds
     }, { passive: true });
     
     // Start auto-scrolling
