@@ -194,14 +194,29 @@
     if (group) group.setAttribute("aria-label", t("langToggle.label"));
   }
 
-  function telHref() {
+  function whatsappHref(message = "") {
     const digits = (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "");
-    return digits ? `tel:+1${digits}` : "tel:";
+    if (!digits) return "#";
+    
+    // WhatsApp link format: https://wa.me/1234567890?text=Message
+    const baseUrl = `https://wa.me/1${digits}`;
+    if (message) {
+      const encodedMessage = encodeURIComponent(message);
+      return `${baseUrl}?text=${encodedMessage}`;
+    }
+    return baseUrl;
   }
 
   function renderBookCTAs() {
+    const bookMessage = lang === "es" 
+      ? "Hola, me gustaría agendar una cita" 
+      : "Hello, I would like to book an appointment";
+    
     document.querySelectorAll("[data-book-cta]").forEach((el) => {
-      el.href = telHref();
+      el.href = whatsappHref(bookMessage);
+      el.target = "_blank";
+      el.rel = "noopener noreferrer";
+      
       // Sticky / header / hero share the book label
       if (el.closest("[data-sticky-bar]")) {
         el.textContent = t("stickyBar.cta");
@@ -793,7 +808,7 @@
         <h3 class="location__hours-title">${escapeHtml(t("location.hours"))}</h3>
         <ul class="location__hours">${hoursRows}</ul>
         <div class="location__actions">
-          <a class="btn btn--primary" href="${telHref()}">${escapeHtml(t("location.call"))}</a>
+          <a class="btn btn--primary" href="${whatsappHref(lang === 'es' ? 'Hola, tengo una pregunta' : 'Hello, I have a question')}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("location.call"))}</a>
           <a class="btn btn--secondary" href="${escapeAttr(mapsLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
             t("location.directions")
           )}</a>
@@ -840,7 +855,7 @@
           <div>
             <h3>${escapeHtml(t("footer.contact"))}</h3>
             <ul class="site-footer__list">
-              <li><a href="${telHref()}">${escapeHtml(cfg.practice.phone || "")}</a></li>
+              <li><a href="${whatsappHref()}" target="_blank" rel="noopener noreferrer">${escapeHtml(cfg.practice.phone || "")}</a></li>
               ${
                 cfg.practice.email
                   ? `<li><a href="mailto:${escapeAttr(cfg.practice.email)}">${escapeHtml(
