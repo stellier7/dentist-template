@@ -79,9 +79,9 @@ const config = {
     // OPTIONAL — soft page wash behind sections
     softBg: "#F0F7FF",
     // OPTIONAL — path or URL to logo (leave blank to show practice name as text logo)
-    logoUrl: "assets/images/logo-sonrilab.png",
+    logoUrl: "assets/images/Logo-sonrilab.jpeg",
     // REQUIRED — full-bleed hero image (place file in /assets/images/)
-    heroImageUrl: "assets/images/hero-sonrilab.jpg",
+    heroImageUrl: "assets/images/hero-sonrilab.jpeg",
   },
 
   // ---------------------------------------------------------------------------
@@ -248,7 +248,7 @@ const config = {
         en: "Dr. Bonilla is dedicated to creating beautiful, healthy smiles through advanced orthodontic treatments. His commitment to continuing education ensures patients receive the most modern and effective care available.",
         es: "El Dr. Bonilla se dedica a crear sonrisas hermosas y saludables mediante tratamientos de ortodoncia avanzados. Su compromiso con la educación continua garantiza que los pacientes reciban la atención más moderna y efectiva disponible.",
       },
-      photoUrl: "assets/images/dentist-bonilla.jpeg",
+      photoUrl: "assets/images/gallery/dentist-bonilla.jpeg",
     },
     {
       name: "Dra. Estefanía Recarte",
@@ -260,7 +260,7 @@ const config = {
         en: "Dr. Recarte leads our digital diagnostics team with expertise in advanced imaging and 3D technology. She is dedicated to providing dentists with the most accurate diagnostic tools available.",
         es: "La Dra. Recarte lidera nuestro equipo de diagnóstico digital con experiencia en imagenología avanzada y tecnología 3D. Se dedica a proporcionar a los odontólogos las herramientas de diagnóstico más precisas disponibles.",
       },
-      photoUrl: "assets/images/dentist-recarte.jpg",
+      photoUrl: "assets/images/dentist-recarte.jpeg",
     },
   ],
 
@@ -444,7 +444,14 @@ const config = {
   // SMILE GALLERY
   // ---------------------------------------------------------------------------
   // OPTIONAL — empty array hides the Gallery section.
-  gallery: [],
+  gallery: [
+    "assets/images/gallery/dentist-bonilla.jpeg",
+    "assets/images/gallery/dentist-recarte.jpeg",
+    "assets/images/gallery/IMG_0133.jpeg",
+    "assets/images/gallery/IMG_0134.jpeg",
+    "assets/images/gallery/IMG_0135.jpeg",
+    "assets/images/gallery/IMG_0128.jpeg",
+  ],
 
   // ---------------------------------------------------------------------------
   // SOCIAL LINKS
