@@ -239,6 +239,18 @@ const config = {
   // REQUIRED — at least one team member. Empty array hides the whole section.
   dentists: [
     {
+      name: "Dr. Adolfo Bonilla",
+      title: {
+        en: "Orthodontics Specialist · UNICAH Orthodontics Residency",
+        es: "Especialista en Ortodoncia · Residente de la Especialidad de Ortodoncia UNICAH",
+      },
+      bio: {
+        en: "Dr. Bonilla is dedicated to creating beautiful, healthy smiles through advanced orthodontic treatments. His commitment to continuing education ensures patients receive the most modern and effective care available.",
+        es: "El Dr. Bonilla se dedica a crear sonrisas hermosas y saludables mediante tratamientos de ortodoncia avanzados. Su compromiso con la educación continua garantiza que los pacientes reciban la atención más moderna y efectiva disponible.",
+      },
+      photoUrl: "assets/images/dentist-bonilla.jpeg",
+    },
+    {
       name: "Dra. Estefanía Recarte",
       title: {
         en: "Diagnostic Specialist",
@@ -248,7 +260,7 @@ const config = {
         en: "Dr. Recarte leads our digital diagnostics team with expertise in advanced imaging and 3D technology. She is dedicated to providing dentists with the most accurate diagnostic tools available.",
         es: "La Dra. Recarte lidera nuestro equipo de diagnóstico digital con experiencia en imagenología avanzada y tecnología 3D. Se dedica a proporcionar a los odontólogos las herramientas de diagnóstico más precisas disponibles.",
       },
-      photoUrl: "assets/images/dra-recarte.jpg",
+      photoUrl: "assets/images/dentist-recarte.jpg",
     },
   ],
 
