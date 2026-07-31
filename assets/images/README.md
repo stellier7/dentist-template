@@ -1,29 +1,14 @@
-# Images
+# SonriLab3D Images
 
-Drop client media here and reference the paths from `js/config.js`.
+## Upload These Files Here:
 
-## Demo template images (included)
+1. **sonrilab3d-logo.png** - Logo (from 2nd attached picture)
+2. **sonrilab3d-hero.jpg** - Hero banner image (from 1st attached picture)
+3. **dra-recarte.jpg** - Photo of Dra. Estefanía Recarte
 
-These ship with the template so the site looks complete out of the box.
-**Replace them** before going live for a real practice.
+## Subdirectories:
 
-| File | Used for |
-| --- | --- |
-| `hero.jpg` | Hero background (`branding.heroImageUrl`) |
-| `dentist.jpg` | Dentist photo (`dentists[].photoUrl`) |
-| `gallery/smile-01.jpg` … `smile-05.jpg` | Smile gallery (`gallery[]`) |
-| `insurance/*.svg` | Insurance logo placeholders |
+- **financing/** - Add bac.png and ficohsa.png
+- **gallery/** - Add gallery images (optional)
 
-## Per-client layout
-
-```
-assets/images/
-  hero.jpg
-  dentist-*.jpg
-  gallery/
-    smile-01.jpg
-    …
-  insurance/
-    delta-dental.svg
-    …
-```
+See `/SONRILAB3D-IMAGES-NEEDED.md` in root for detailed instructions.
