@@ -79,9 +79,9 @@ const config = {
     // OPTIONAL — soft page wash behind sections
     softBg: "#F0F7FF",
     // OPTIONAL — path or URL to logo (leave blank to show practice name as text logo)
-    logoUrl: "assets/images/sonrilab3d-logo.png",
+    logoUrl: "assets/images/logo-sonrilab.png",
     // REQUIRED — full-bleed hero image (place file in /assets/images/)
-    heroImageUrl: "assets/images/sonrilab3d-hero.jpg",
+    heroImageUrl: "assets/images/hero-sonrilab.jpg",
   },
 
   // ---------------------------------------------------------------------------
