@@ -229,7 +229,7 @@ const config = {
         en: "Dr. Berlioz trained at the prestigious Universitat Barcelona and ESIRO Barcelona, bringing world-class expertise in endodontics to Honduras. His precision and gentle approach have helped countless patients save their natural teeth with advanced root canal treatments.",
         es: "El Dr. Berlioz se formó en la prestigiosa Universitat Barcelona y ESIRO Barcelona, trayendo experiencia de clase mundial en endodoncia a Honduras. Su precisión y enfoque gentil han ayudado a innumerables pacientes a conservar sus dientes naturales con tratamientos de conducto avanzados.",
       },
-      photoUrl: "",
+      photoUrl: "assets/images/gallery/dentist-berlioz.jpg",
     },
     {
       name: "Dra. Luisa Pérez",
