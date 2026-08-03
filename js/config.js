@@ -301,7 +301,7 @@ const config = {
         en: "Dr. Colorado provides comprehensive general dentistry services with a warm, patient-centered approach. Her dedication to preventive care and patient education helps families maintain optimal oral health throughout their lives.",
         es: "La Dra. Colorado brinda servicios integrales de odontología general con un enfoque cálido y centrado en el paciente. Su dedicación al cuidado preventivo y la educación del paciente ayuda a las familias a mantener una salud oral óptima durante toda su vida.",
       },
-      photoUrl: "",
+      photoUrl: "assets/images/gallery/dentist-colorado.jpg",
     },
   ],
 
