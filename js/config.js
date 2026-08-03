@@ -14,55 +14,44 @@ const config = {
   // ---------------------------------------------------------------------------
   // SITE DEFAULTS
   // ---------------------------------------------------------------------------
-  // REQUIRED — default language when a visitor first loads the site ("es" | "en")
   defaultLanguage: "es",
 
   // ---------------------------------------------------------------------------
   // PRACTICE INFO
   // ---------------------------------------------------------------------------
   practice: {
-    // REQUIRED — shown in hero, nav, footer, page title
-    name: "Sonrisa Dental",
+    name: "Odontocentro Berlioz",
 
-    // REQUIRED — warm one-line tagline under the practice name
     tagline: {
-      en: "Gentle care for healthier, brighter smiles.",
-      es: "Cuidado gentil para sonrisas más sanas y radiantes.",
+      en: "We Transform Smiles!",
+      es: "¡Transformamos Sonrisas!",
     },
 
-    // REQUIRED — used for click-to-call (tel:) links. Digits only recommended for telHref.
-    phone: "(305) 555-0148",
-    // REQUIRED — raw digits for tel: links (no spaces or punctuation)
-    phoneTel: "3055550148",
+    phone: "+504 3378-0262",
+    phoneTel: "+50433780262",
 
-    // REQUIRED — display address and map/directions helpers
     address: {
-      street: "1842 Coral Way",
-      city: "Miami",
-      state: "FL",
-      zip: "33145",
-      // OPTIONAL — override the Google Maps query; leave blank to auto-build from address
-      mapsQuery: "",
+      street: "2 Calle NO, Barrio San Blas",
+      city: "Comayagua",
+      state: "Honduras",
+      zip: "12101",
+      mapsQuery: "2 Calle NO, Barrio San Blas, Comayagua, Honduras",
     },
 
-    // REQUIRED — hours shown in Location + Footer. Use empty string to omit a day.
     hours: {
-      mon: "9:00 AM – 6:00 PM",
-      tue: "9:00 AM – 6:00 PM",
-      wed: "9:00 AM – 6:00 PM",
-      thu: "9:00 AM – 6:00 PM",
-      fri: "9:00 AM – 4:00 PM",
-      sat: "9:00 AM – 1:00 PM",
-      sun: "", // closed / leave blank to hide
+      mon: "8:00 AM – 6:00 PM",
+      tue: "8:00 AM – 6:00 PM",
+      wed: "8:00 AM – 6:00 PM",
+      thu: "8:00 AM – 6:00 PM",
+      fri: "8:00 AM – 6:00 PM",
+      sat: "9:00 AM – 12:00 PM",
+      sun: "",
     },
 
-    // OPTIONAL — email shown in footer when present
-    email: "hola@sonrisadental.com",
+    email: "odontocentroberlioz@gmail.com",
 
-    // OPTIONAL — trust bar stats (leave a field blank to hide that trust item)
-    yearsInPractice: "15+",
-    patientRating: "4.9",
-    // OPTIONAL — short insurance blurb for trust bar
+    yearsInPractice: "10+",
+    patientRating: "5.0",
     insuranceAccepted: true,
   },
 
@@ -70,25 +59,17 @@ const config = {
   // BRANDING
   // ---------------------------------------------------------------------------
   branding: {
-    // REQUIRED — soft clinical blue (CSS color value)
-    primaryColor: "#3A7CA5",
-    // REQUIRED — warmer accent for CTAs / highlights (avoid neon or flashy tones)
-    accentColor: "#2F9B8A",
-    // OPTIONAL — deeper shade for hover states; leave blank to auto-derive
-    primaryDark: "#2E6284",
-    // OPTIONAL — soft page wash behind sections
-    softBg: "#F4F8FB",
-    // OPTIONAL — path or URL to logo (leave blank to show practice name as text logo)
-    logoUrl: "",
-    // REQUIRED — full-bleed hero image (place file in /assets/images/)
-    // Demo template image included — replace per client
-    heroImageUrl: "assets/images/hero.jpg",
+    primaryColor: "#1E5A8E",
+    accentColor: "#0A7CBE",
+    primaryDark: "#14426B",
+    softBg: "#F0F7FC",
+    logoUrl: "assets/images/Logo-odontocentroBerlioz.jpeg",
+    heroImageUrl: "assets/images/Hero-odonocentroBerlioz.jpeg",
   },
 
   // ---------------------------------------------------------------------------
   // UI COPY (labels, nav, section headers, buttons) — per language
   // ---------------------------------------------------------------------------
-  // REQUIRED — edit wording if needed; structure keys must stay in sync with app.js
   ui: {
     en: {
       nav: {
@@ -116,8 +97,8 @@ const config = {
       sections: {
         services: "Our Services",
         servicesLead: "Comprehensive care for every smile.",
-        dentists: "Meet the Dentist",
-        dentistsLead: "Care that feels personal from the first visit.",
+        dentists: "Meet Our Team",
+        dentistsLead: "Expert specialists dedicated to your dental health.",
         gallery: "Smile Gallery",
         galleryLead: "Real results from patients like you.",
         testimonials: "What Patients Say",
@@ -187,8 +168,8 @@ const config = {
       sections: {
         services: "Nuestros Servicios",
         servicesLead: "Cuidado integral para cada sonrisa.",
-        dentists: "Conoce al Dentista",
-        dentistsLead: "Atención cercana desde la primera visita.",
+        dentists: "Conoce a Nuestro Equipo",
+        dentistsLead: "Especialistas expertos dedicados a tu salud dental.",
         gallery: "Galería de Sonrisas",
         galleryLead: "Resultados reales de pacientes como tú.",
         testimonials: "Lo Que Dicen Nuestros Pacientes",
@@ -237,108 +218,245 @@ const config = {
   // ---------------------------------------------------------------------------
   // DENTISTS
   // ---------------------------------------------------------------------------
-  // REQUIRED — at least one dentist. Empty array hides the whole section.
   dentists: [
     {
-      name: "Dr. Carlos Mendoza",
+      name: "Dr. Ricardo Berlioz",
       title: {
-        en: "Lead Dentist · DDS",
-        es: "Dentista Principal · DDS",
+        en: "Endodontics Specialist · Universitat Barcelona",
+        es: "Especialista en Endodoncia · Universitat Barcelona",
       },
       bio: {
-        en: "Dr. Mendoza has cared for Miami families for over a decade. He believes great dentistry starts with listening — and that every visit should feel calm, clear, and kind.",
-        es: "El Dr. Mendoza ha cuidado a familias de Miami por más de una década. Cree que una gran odontología empieza escuchando — y que cada visita debe sentirse calmada, clara y cercana.",
+        en: "Dr. Berlioz trained at the prestigious Universitat Barcelona and ESIRO Barcelona, bringing world-class expertise in endodontics to Honduras. His precision and gentle approach have helped countless patients save their natural teeth with advanced root canal treatments.",
+        es: "El Dr. Berlioz se formó en la prestigiosa Universitat Barcelona y ESIRO Barcelona, trayendo experiencia de clase mundial en endodoncia a Honduras. Su precisión y enfoque gentil han ayudado a innumerables pacientes a conservar sus dientes naturales con tratamientos de conducto avanzados.",
       },
-      // OPTIONAL — path/URL; leave blank for initials placeholder
-      // Demo template image included — replace per client
-      photoUrl: "assets/images/dentist.jpg",
+      photoUrl: "",
+    },
+    {
+      name: "Dra. Luisa Pérez",
+      title: {
+        en: "Maxillofacial Surgeon",
+        es: "Cirujana Maxilofacial",
+      },
+      bio: {
+        en: "Dr. Pérez specializes in complex oral and maxillofacial surgery procedures. Her expertise in surgical treatments ensures safe, effective care for patients requiring advanced interventions, from wisdom teeth extractions to reconstructive procedures.",
+        es: "La Dra. Pérez se especializa en procedimientos complejos de cirugía oral y maxilofacial. Su experiencia en tratamientos quirúrgicos asegura atención segura y efectiva para pacientes que requieren intervenciones avanzadas, desde extracciones de muelas del juicio hasta procedimientos reconstructivos.",
+      },
+      photoUrl: "assets/images/gallery/dentist-perez.jpg",
+    },
+    {
+      name: "Dra. Anarely Rivera",
+      title: {
+        en: "Orthodontics Specialist",
+        es: "Especialista en Ortodoncia",
+      },
+      bio: {
+        en: "Dr. Rivera is passionate about creating beautiful, healthy smiles through orthodontics. With a keen eye for aesthetics and function, she designs personalized treatment plans that transform not just teeth alignment, but confidence and quality of life.",
+        es: "La Dra. Rivera es apasionada por crear sonrisas hermosas y saludables a través de la ortodoncia. Con un ojo perspicaz para la estética y función, diseña planes de tratamiento personalizados que transforman no solo la alineación dental, sino la confianza y calidad de vida.",
+      },
+      photoUrl: "assets/images/gallery/dentist-arviera.jpg",
+    },
+    {
+      name: "Dr. Gabriel Rivera",
+      title: {
+        en: "Orthodontics & Maxillofacial Orthopedics Specialist",
+        es: "Especialista en Ortodoncia y Ortopedia Maxilofacial",
+      },
+      bio: {
+        en: "Dr. Rivera combines orthodontics with maxillofacial orthopedics to address complex bite and jaw alignment issues. His comprehensive approach ensures optimal facial harmony and long-term dental health for patients of all ages.",
+        es: "El Dr. Rivera combina ortodoncia con ortopedia maxilofacial para abordar problemas complejos de mordida y alineación mandibular. Su enfoque integral asegura armonía facial óptima y salud dental a largo plazo para pacientes de todas las edades.",
+      },
+      photoUrl: "assets/images/gallery/dentist-rivera.jpg",
+    },
+    {
+      name: "Dra. Debby Velázquez",
+      title: {
+        en: "Implantology & Oral Rehabilitation Specialist",
+        es: "Especialista en Implantología y Rehabilitación Oral",
+      },
+      bio: {
+        en: "Dr. Velázquez specializes in restoring smiles through advanced implantology and oral rehabilitation. Her meticulous work with dental implants and full-mouth restorations gives patients the confidence to smile, speak, and eat naturally again.",
+        es: "La Dra. Velázquez se especializa en restaurar sonrisas a través de implantología avanzada y rehabilitación oral. Su trabajo meticuloso con implantes dentales y restauraciones completas devuelve a los pacientes la confianza para sonreír, hablar y comer naturalmente.",
+      },
+      photoUrl: "assets/images/gallery/dentist-velasquez.jpg",
+    },
+    {
+      name: "Dr. Tirzo Bulnez",
+      title: {
+        en: "Periodontics Specialist",
+        es: "Especialista en Periodoncia",
+      },
+      bio: {
+        en: "Dr. Bulnez focuses on the health of gums and supporting structures of teeth. His expertise in periodontics helps patients prevent and treat gum disease, ensuring a strong foundation for a lifetime of healthy smiles.",
+        es: "El Dr. Bulnez se enfoca en la salud de las encías y estructuras de soporte de los dientes. Su experiencia en periodoncia ayuda a los pacientes a prevenir y tratar enfermedades de las encías, asegurando una base sólida para toda una vida de sonrisas saludables.",
+      },
+      photoUrl: "assets/images/gallery/dentist-bulnez.jpg",
+    },
+    {
+      name: "Dra. Carolina Colorado",
+      title: {
+        en: "General Dentistry",
+        es: "Odontología General",
+      },
+      bio: {
+        en: "Dr. Colorado provides comprehensive general dentistry services with a warm, patient-centered approach. Her dedication to preventive care and patient education helps families maintain optimal oral health throughout their lives.",
+        es: "La Dra. Colorado brinda servicios integrales de odontología general con un enfoque cálido y centrado en el paciente. Su dedicación al cuidado preventivo y la educación del paciente ayuda a las familias a mantener una salud oral óptima durante toda su vida.",
+      },
+      photoUrl: "",
     },
   ],
 
   // ---------------------------------------------------------------------------
   // SERVICES
   // ---------------------------------------------------------------------------
-  // REQUIRED for Services section. Empty array hides the section.
-  // icon: short key used by app.js to pick an inline SVG ("cleaning", "whitening",
-  // "aligners", "emergency", "implants", "pediatric", "general", "cosmetic")
   services: [
-    {
-      name: { en: "Cleanings & Exams", es: "Limpiezas y Exámenes" },
-      description: {
-        en: "Gentle preventive care to keep gums healthy and catch concerns early — comfortable visits for the whole family.",
-        es: "Cuidado preventivo suave para mantener encías sanas y detectar problemas a tiempo — visitas cómodas para toda la familia.",
-      },
-      icon: "cleaning",
-    },
     {
       name: { en: "Teeth Whitening", es: "Blanqueamiento Dental" },
       description: {
-        en: "Professional whitening for a brighter smile with results that look natural — not overdone.",
-        es: "Blanqueamiento profesional para una sonrisa más luminosa con resultados naturales — nada exagerado.",
+        en: "Professional whitening treatments that brighten your smile safely and effectively, revealing a more confident, radiant you.",
+        es: "Tratamientos de blanqueamiento profesional que iluminan tu sonrisa de manera segura y efectiva, revelando un tú más radiante y confiado.",
       },
       icon: "whitening",
     },
     {
-      name: { en: "Invisalign", es: "Invisalign" },
+      name: { en: "Dental Cleanings", es: "Limpiezas Dentales" },
       description: {
-        en: "Clear aligners that straighten teeth discreetly, with personalized plans and check-ins along the way.",
-        es: "Alineadores transparentes que enderezan los dientes con discreción, con planes personalizados y seguimientos.",
+        en: "Thorough preventive cleanings to maintain healthy teeth and gums, removing plaque and tartar for optimal oral hygiene.",
+        es: "Limpiezas preventivas profundas para mantener dientes y encías saludables, eliminando placa y sarro para una higiene oral óptima.",
       },
-      icon: "aligners",
+      icon: "cleaning",
     },
     {
-      name: { en: "Emergency Care", es: "Atención de Emergencia" },
+      name: { en: "Restorations (Fillings)", es: "Restauraciones (Talones)" },
       description: {
-        en: "Same-day help for toothaches, chips, and urgent concerns — call us and we’ll do our best to see you quickly.",
-        es: "Ayuda el mismo día para dolores, fracturas y urgencias — llámanos y haremos lo posible por atenderte pronto.",
+        en: "High-quality tooth restorations using modern materials that blend naturally with your smile while restoring function and strength.",
+        es: "Restauraciones dentales de alta calidad usando materiales modernos que se integran naturalmente con tu sonrisa mientras restauran función y fortaleza.",
+      },
+      icon: "general",
+    },
+    {
+      name: { en: "Root Canals", es: "Endodoncias" },
+      description: {
+        en: "Advanced root canal treatments performed with precision and care to save your natural teeth and eliminate pain.",
+        es: "Tratamientos de conducto avanzados realizados con precisión y cuidado para salvar tus dientes naturales y eliminar el dolor.",
+      },
+      icon: "emergency",
+    },
+    {
+      name: { en: "Dental Fracture Repair", es: "Reparación de Fracturas Dentales" },
+      description: {
+        en: "Expert repair of chipped, cracked, or broken teeth to restore your smile's appearance and protect tooth structure.",
+        es: "Reparación experta de dientes astillados, agrietados o rotos para restaurar la apariencia de tu sonrisa y proteger la estructura dental.",
       },
       icon: "emergency",
     },
     {
       name: { en: "Dental Implants", es: "Implantes Dentales" },
       description: {
-        en: "Restore missing teeth with durable, natural-looking implants planned for comfort and long-term function.",
-        es: "Recupera dientes perdidos con implantes duraderos y de aspecto natural, pensados para comodidad y función.",
+        en: "Permanent tooth replacement solutions that look, feel, and function just like natural teeth for a lifetime of confident smiles.",
+        es: "Soluciones permanentes de reemplazo dental que lucen, se sienten y funcionan como dientes naturales para toda una vida de sonrisas confiadas.",
       },
       icon: "implants",
     },
     {
-      name: { en: "Pediatric Dentistry", es: "Odontología Pediátrica" },
+      name: { en: "Smile Design", es: "Diseño de Sonrisa" },
       description: {
-        en: "Friendly visits that help kids feel at ease — building healthy habits and confident little smiles.",
-        es: "Visitas amables que ayudan a los niños a sentirse tranquilos — creando hábitos sanos y sonrisas confiadas.",
+        en: "Comprehensive smile makeovers combining multiple cosmetic procedures to create the beautiful, harmonious smile you've always wanted.",
+        es: "Transformaciones completas de sonrisa combinando múltiples procedimientos cosméticos para crear la sonrisa hermosa y armoniosa que siempre has deseado.",
       },
-      icon: "pediatric",
+      icon: "cosmetic",
+    },
+    {
+      name: { en: "Dental Veneers", es: "Carillas Dentales" },
+      description: {
+        en: "Ultra-thin porcelain shells that transform your smile by correcting color, shape, and alignment imperfections.",
+        es: "Láminas ultra delgadas de porcelana que transforman tu sonrisa corrigiendo imperfecciones de color, forma y alineación.",
+      },
+      icon: "cosmetic",
+    },
+    {
+      name: { en: "Micro Designs", es: "Microdiseños" },
+      description: {
+        en: "Artistic dental embellishments and micro-gems that add personality and sparkle to your unique smile.",
+        es: "Decoraciones dentales artísticas y micro-gemas que agregan personalidad y brillo a tu sonrisa única.",
+      },
+      icon: "cosmetic",
+    },
+    {
+      name: { en: "Zirconia Crowns", es: "Coronas de Zirconio" },
+      description: {
+        en: "Premium, metal-free crowns offering superior strength, durability, and natural aesthetics for long-lasting restorations.",
+        es: "Coronas premium sin metal que ofrecen resistencia, durabilidad y estética natural superior para restauraciones duraderas.",
+      },
+      icon: "general",
+    },
+    {
+      name: { en: "Porcelain Bridges", es: "Puentes de Porcelana" },
+      description: {
+        en: "Custom-crafted bridges that seamlessly replace missing teeth, restoring your complete smile and bite function.",
+        es: "Puentes diseñados a medida que reemplazan perfectamente dientes faltantes, restaurando tu sonrisa completa y función de mordida.",
+      },
+      icon: "general",
+    },
+    {
+      name: { en: "Flexible Dentures", es: "Prótesis Flexibles" },
+      description: {
+        en: "Comfortable, lightweight removable dentures that adapt naturally to your mouth for improved fit and confidence.",
+        es: "Prótesis removibles cómodas y ligeras que se adaptan naturalmente a tu boca para mejor ajuste y confianza.",
+      },
+      icon: "general",
     },
   ],
 
   // ---------------------------------------------------------------------------
   // TESTIMONIALS
   // ---------------------------------------------------------------------------
-  // OPTIONAL — empty array hides the Testimonials section entirely.
   testimonials: [
     {
       quote: {
-        en: "The team made my first visit so easy. Clear explanations, gentle care, and I finally look forward to cleanings.",
-        es: "El equipo hizo mi primera visita muy fácil. Explicaciones claras, cuidado gentil, y por fin espero con gusto las limpiezas.",
+        en: "Excellent service! The team at Odontocentro Berlioz is very professional and caring. They took great care of me during my root canal treatment. Highly recommended!",
+        es: "¡Excelente servicio! El equipo de Odontocentro Berlioz es muy profesional y atento. Me cuidaron muy bien durante mi tratamiento de endodoncia. ¡Altamente recomendado!",
       },
-      author: "María G.",
+      author: "María José L.",
       rating: 5,
     },
     {
       quote: {
-        en: "Dr. Morales is wonderful with our kids. The office feels calm — never rushed — and everyone is so kind.",
-        es: "La Dra. Morales es maravillosa con nuestros hijos. El consultorio se siente calmado — nunca con prisa — y todos son muy amables.",
+        en: "I was afraid of the dentist, but Dr. Berlioz and his team made me feel so comfortable. The clinic is modern and clean, and the results of my smile design exceeded my expectations!",
+        es: "Le tenía miedo al dentista, pero el Dr. Berlioz y su equipo me hicieron sentir muy cómoda. La clínica es moderna y limpia, ¡y los resultados de mi diseño de sonrisa superaron mis expectativas!",
       },
       author: "Carlos R.",
       rating: 5,
     },
     {
       quote: {
-        en: "I started Invisalign here and the process has been smooth from day one. Highly recommend.",
-        es: "Empecé Invisalign aquí y el proceso ha sido fluido desde el primer día. Los recomiendo mucho.",
+        en: "Best dental clinic in Comayagua! Dr. Rivera did an amazing job with my orthodontic treatment. My smile has completely transformed. Thank you to the whole team!",
+        es: "¡Mejor clínica dental en Comayagua! La Dra. Rivera hizo un trabajo increíble con mi tratamiento de ortodoncia. Mi sonrisa se ha transformado completamente. ¡Gracias a todo el equipo!",
       },
-      author: "Ana L.",
+      author: "Ana Lucía M.",
+      rating: 5,
+    },
+    {
+      quote: {
+        en: "Very satisfied with the dental implant service. Dr. Velázquez is an excellent professional and explained every step of the process. The clinic has state-of-the-art equipment.",
+        es: "Muy satisfecho con el servicio de implantes dentales. La Dra. Velázquez es una excelente profesional y me explicó cada paso del proceso. La clínica cuenta con equipos de última tecnología.",
+      },
+      author: "Roberto S.",
+      rating: 5,
+    },
+    {
+      quote: {
+        en: "I recommend Odontocentro Berlioz 100%. The attention is personalized and they always make you feel welcome. My whole family comes here now!",
+        es: "Recomiendo Odontocentro Berlioz al 100%. La atención es personalizada y siempre te hacen sentir bienvenido. ¡Ahora toda mi familia viene aquí!",
+      },
+      author: "Patricia G.",
+      rating: 5,
+    },
+    {
+      quote: {
+        en: "Professional, kind, and efficient. My dental cleaning was thorough and painless. The facilities are impeccable. I will definitely be back!",
+        es: "Profesionales, amables y eficientes. Mi limpieza dental fue completa y sin dolor. Las instalaciones son impecables. ¡Definitivamente volveré!",
+      },
+      author: "Luis Fernando H.",
       rating: 5,
     },
   ],
@@ -346,36 +464,11 @@ const config = {
   // ---------------------------------------------------------------------------
   // INSURANCE LOGOS
   // ---------------------------------------------------------------------------
-  // OPTIONAL — array of image URLs/paths. Empty array hides Insurance section.
-  // Tip: drop SVGs/PNGs in /assets/images/insurance/ and reference them here.
-  insuranceLogos: [
-    {
-      name: "Delta Dental",
-      src: "assets/images/insurance/delta-dental.svg",
-    },
-    {
-      name: "Cigna",
-      src: "assets/images/insurance/cigna.svg",
-    },
-    {
-      name: "Aetna",
-      src: "assets/images/insurance/aetna.svg",
-    },
-    {
-      name: "MetLife",
-      src: "assets/images/insurance/metlife.svg",
-    },
-    {
-      name: "Guardian",
-      src: "assets/images/insurance/guardian.svg",
-    },
-  ],
+  insuranceLogos: [],
 
   // ---------------------------------------------------------------------------
   // SMILE GALLERY
   // ---------------------------------------------------------------------------
-  // OPTIONAL — empty array hides the Gallery section.
-  // Demo template images included — replace per client
   gallery: [
     "assets/images/gallery/smile-01.jpg",
     "assets/images/gallery/smile-02.jpg",
@@ -387,13 +480,10 @@ const config = {
   // ---------------------------------------------------------------------------
   // SOCIAL LINKS
   // ---------------------------------------------------------------------------
-  // OPTIONAL — leave blank to hide that icon in the footer
-  // ⚠️ UPDATE THESE: Currently placeholder URLs. Replace with actual practice social profiles.
   socials: {
-    instagram: "", // e.g. "https://instagram.com/sonrisadental"
-    facebook: "", // e.g. "https://facebook.com/sonrisadental"
+    instagram: "https://www.instagram.com/odontocentroberlioz?igsh=MTAyZW5jMW5ub2s1",
+    facebook: "https://www.facebook.com/odontocentroberlioz?locale=es_LA",
   },
 };
 
-// Expose globally for app.js (no bundler / no modules required)
 window.SITE_CONFIG = config;
