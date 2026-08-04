@@ -467,15 +467,24 @@
     let isPaused = false;
     let currentIndex = 0;
     let hasStarted = false;
+    let isAutoScrolling = false; // FIX #3: Track programmatic scrolls
     
     function scrollToCard(index) {
       const card = cards[index];
       if (!card) return;
       
+      // FIX #3: Flag that this is an auto-scroll, not user scroll
+      isAutoScrolling = true;
+      
       grid.scrollTo({
         left: card.offsetLeft,
         behavior: 'smooth'
       });
+      
+      // Clear flag after smooth-scroll animation completes (~300-500ms)
+      setTimeout(() => {
+        isAutoScrolling = false;
+      }, 600);
     }
     
     function startAutoScroll() {
@@ -507,9 +516,17 @@
     grid.addEventListener('mouseleave', resumeAutoScroll);
     grid.addEventListener('touchstart', pauseAutoScroll, { passive: true });
     
+    // FIX #1: Resume on touch end (was missing!)
+    grid.addEventListener('touchend', resumeAutoScroll, { passive: true });
+    grid.addEventListener('touchcancel', resumeAutoScroll, { passive: true });
+    
     // Pause when user manually scrolls
     let scrollTimeout;
     grid.addEventListener('scroll', () => {
+      // FIX #3: Ignore scroll events from auto-scroll itself
+      if (isAutoScrolling) return;
+      
+      // Only pause for genuine user scrolls
       pauseAutoScroll();
       clearTimeout(scrollTimeout);
       
@@ -543,6 +560,8 @@
             grid.scrollTo({ left: 0, behavior: 'auto' });
             // Start auto-scrolling after a brief delay
             setTimeout(() => {
+              // FIX #2: Force clear any pause from initialization scroll
+              isPaused = false;
               startAutoScroll();
             }, 1000);
             observer.unobserve(section);
