@@ -460,9 +460,13 @@
     const cards = grid.querySelectorAll('.dentist-card');
     if (cards.length <= 1) return;
     
+    const section = document.querySelector('[data-section="dentists"]');
+    if (!section) return;
+    
     let autoScrollInterval = null;
     let isPaused = false;
     let currentIndex = 0;
+    let hasStarted = false;
     
     function scrollToCard(index) {
       const card = cards[index];
@@ -528,8 +532,30 @@
       }, 7000); // Resume after 7 seconds (extra time for reading bios)
     }, { passive: true });
     
-    // Start auto-scrolling
-    startAutoScroll();
+    // Only start auto-scrolling when the section comes into view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasStarted) {
+            hasStarted = true;
+            // Ensure we start at the first dentist
+            currentIndex = 0;
+            grid.scrollTo({ left: 0, behavior: 'auto' });
+            // Start auto-scrolling after a brief delay
+            setTimeout(() => {
+              startAutoScroll();
+            }, 1000);
+            observer.unobserve(section);
+          }
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: '0px 0px -10% 0px'
+      }
+    );
+    
+    observer.observe(section);
   }
 
   // -------------------------------------------------------------------------
