@@ -488,6 +488,13 @@ body.nav-open {
   object-position: center top;
 }
 
+/* Show more of bottom (shoulders) on desktop */
+@media (min-width: 768px) {
+  .hero__media img {
+    object-position: center 20%;
+  }
+}
+
 .hero__veil {
   position: absolute;
   inset: 0;
