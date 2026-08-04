@@ -458,7 +458,7 @@ body.nav-open {
 .hero {
   position: relative;
   isolation: isolate;
-  min-height: min(92vh, 760px);
+  min-height: min(75vh, 600px);
   display: grid;
   align-items: end;
   overflow: hidden;
