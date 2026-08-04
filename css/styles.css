@@ -468,7 +468,7 @@ body.nav-open {
 
 .hero__media {
   position: absolute;
-  inset: -12% -5% -12% -5%;
+  inset: 0;
   z-index: -2;
   will-change: transform;
   transform: translate3d(0, 0, 0);

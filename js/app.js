@@ -199,7 +199,7 @@
     if (!digits) return "#";
     
     // WhatsApp link format: https://wa.me/1234567890?text=Message
-    const baseUrl = `https://wa.me/1${digits}`;
+    const baseUrl = `https://wa.me/${digits}`;
     if (message) {
       const encodedMessage = encodeURIComponent(message);
       return `${baseUrl}?text=${encodedMessage}`;
