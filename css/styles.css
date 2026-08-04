@@ -477,8 +477,8 @@ body.nav-open {
 .hero__media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 35%;
+  object-fit: contain;
+  object-position: center center;
 }
 
 .hero__veil {
