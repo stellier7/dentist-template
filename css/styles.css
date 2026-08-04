@@ -466,6 +466,13 @@ body.nav-open {
   overscroll-behavior-x: none;
 }
 
+/* Restore original hero height for tablets and desktop */
+@media (min-width: 768px) {
+  .hero {
+    min-height: min(92vh, 760px);
+  }
+}
+
 .hero__media {
   position: absolute;
   inset: 0 -15% 0 -15%;
