@@ -64,7 +64,7 @@ const config = {
     primaryDark: "#14426B",
     softBg: "#F0F7FC",
     logoUrl: "assets/images/Logo-odontocentroBerlioz.jpeg",
-    heroImageUrl: "assets/images/Hero-odonocentroBerlioz.jpeg",
+    heroImageUrl: "assets/images/Hero-odontocentroBerlioz.jpeg",
   },
 
   // ---------------------------------------------------------------------------
@@ -292,16 +292,16 @@ const config = {
       photoUrl: "assets/images/gallery/dentist-bulnez.jpg",
     },
     {
-      name: "Dra. Carolina Colorado",
+      name: "Dra. Carolina Cabral",
       title: {
         en: "General Dentistry",
         es: "Odontología General",
       },
       bio: {
-        en: "Dr. Colorado provides comprehensive general dentistry services with a warm, patient-centered approach. Her dedication to preventive care and patient education helps families maintain optimal oral health throughout their lives.",
-        es: "La Dra. Colorado brinda servicios integrales de odontología general con un enfoque cálido y centrado en el paciente. Su dedicación al cuidado preventivo y la educación del paciente ayuda a las familias a mantener una salud oral óptima durante toda su vida.",
+        en: "Dr. Cabral provides comprehensive general dentistry services with a warm, patient-centered approach. Her dedication to preventive care and patient education helps families maintain optimal oral health throughout their lives.",
+        es: "La Dra. Cabral brinda servicios integrales de odontología general con un enfoque cálido y centrado en el paciente. Su dedicación al cuidado preventivo y la educación del paciente ayuda a las familias a mantener una salud oral óptima durante toda su vida.",
       },
-      photoUrl: "assets/images/gallery/dentist-colorado.jpg",
+      photoUrl: "assets/images/gallery/dentist-cabral.jpg",
     },
   ],
 
