@@ -244,18 +244,6 @@ const config = {
       photoUrl: "assets/images/gallery/dentist-perez.jpg",
     },
     {
-      name: "Dra. Anarely Rivera",
-      title: {
-        en: "Orthodontics Specialist",
-        es: "Especialista en Ortodoncia",
-      },
-      bio: {
-        en: "Dr. Rivera is passionate about creating beautiful, healthy smiles through orthodontics. With a keen eye for aesthetics and function, she designs personalized treatment plans that transform not just teeth alignment, but confidence and quality of life.",
-        es: "La Dra. Rivera es apasionada por crear sonrisas hermosas y saludables a través de la ortodoncia. Con un ojo perspicaz para la estética y función, diseña planes de tratamiento personalizados que transforman no solo la alineación dental, sino la confianza y calidad de vida.",
-      },
-      photoUrl: "assets/images/gallery/dentist-arviera.jpg",
-    },
-    {
       name: "Dr. Gabriel Rivera",
       title: {
         en: "Orthodontics & Maxillofacial Orthopedics Specialist",
@@ -266,6 +254,18 @@ const config = {
         es: "El Dr. Rivera combina ortodoncia con ortopedia maxilofacial para abordar problemas complejos de mordida y alineación mandibular. Su enfoque integral asegura armonía facial óptima y salud dental a largo plazo para pacientes de todas las edades.",
       },
       photoUrl: "assets/images/gallery/dentist-rivera.jpg",
+    },
+    {
+      name: "Dra. Anarely Rivera",
+      title: {
+        en: "Orthodontics Specialist",
+        es: "Especialista en Ortodoncia",
+      },
+      bio: {
+        en: "Dr. Rivera is passionate about creating beautiful, healthy smiles through orthodontics. With a keen eye for aesthetics and function, she designs personalized treatment plans that transform not just teeth alignment, but confidence and quality of life.",
+        es: "La Dra. Rivera es apasionada por crear sonrisas hermosas y saludables a través de la ortodoncia. Con un ojo perspicaz para la estética y función, diseña planes de tratamiento personalizados que transforman no solo la alineación dental, sino la confianza y calidad de vida.",
+      },
+      photoUrl: "assets/images/gallery/dentist-arviera.jpg",
     },
     {
       name: "Dra. Debby Velázquez",
