@@ -491,7 +491,7 @@ body.nav-open {
 /* Show more of bottom (shoulders) on desktop */
 @media (min-width: 768px) {
   .hero__media img {
-    object-position: center 20%;
+    object-position: center 10%;
   }
 }
 
