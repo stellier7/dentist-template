@@ -450,8 +450,11 @@
           .join("")
           .toUpperCase();
 
+        const photoAttrs = d.photoPosition
+          ? ` data-photo-position style="--photo-position: ${escapeAttr(d.photoPosition)}"`
+          : "";
         const photo = d.photoUrl
-          ? `<img src="${escapeAttr(d.photoUrl)}" alt="${escapeAttr(d.name)}" loading="lazy" decoding="async" />`
+          ? `<img src="${escapeAttr(d.photoUrl)}" alt="${escapeAttr(d.name)}" loading="lazy" decoding="async"${photoAttrs} />`
           : `<div class="dentist-card__placeholder" aria-hidden="true">${escapeHtml(initials)}</div>`;
 
         return `
