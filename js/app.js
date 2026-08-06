@@ -138,18 +138,20 @@
     if (!brand) return;
 
     const logoUrl = cfg.branding.logoUrl;
-    const initials = cfg.practice.name
+    const displayName = cfg.practice.shortName || cfg.practice.name;
+    const initials = displayName
       .split(/\s+/)
       .slice(0, 2)
       .map((w) => w[0] || "")
       .join("")
       .toUpperCase();
 
+    brand.setAttribute("aria-label", cfg.practice.name);
     brand.innerHTML = logoUrl
       ? `<img class="brand__logo" src="${escapeAttr(logoUrl)}" alt="${escapeAttr(cfg.practice.name)} logo" />
-         <span class="brand__name">${escapeHtml(cfg.practice.name)}</span>`
+         <span class="brand__name">${escapeHtml(displayName)}</span>`
       : `<span class="brand__mark" aria-hidden="true">${escapeHtml(initials)}</span>
-         <span class="brand__name">${escapeHtml(cfg.practice.name)}</span>`;
+         <span class="brand__name">${escapeHtml(displayName)}</span>`;
   }
 
   function renderNav() {
@@ -195,11 +197,18 @@
   }
 
   function whatsappHref(message = "") {
-    const digits = (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "");
+    // Prefer dedicated WhatsApp number; fall back to phoneTel / phone.
+    // Digits should include country code (e.g. 50487748370 for Honduras).
+    const digits = (
+      cfg.practice.whatsappTel ||
+      cfg.practice.whatsapp ||
+      cfg.practice.phoneTel ||
+      cfg.practice.phone ||
+      ""
+    ).replace(/\D/g, "");
     if (!digits) return "#";
-    
-    // WhatsApp link format: https://wa.me/1234567890?text=Message
-    const baseUrl = `https://wa.me/1${digits}`;
+
+    const baseUrl = `https://wa.me/${digits}`;
     if (message) {
       const encodedMessage = encodeURIComponent(message);
       return `${baseUrl}?text=${encodedMessage}`;
@@ -232,8 +241,16 @@
     const bar = document.querySelector("[data-sticky-bar]");
     if (!bar) return;
     // Always useful when phone exists; hide only if no phone configured
-    const hasPhone = Boolean((cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, ""));
-    bar.hidden = !hasPhone;
+    const hasContact = Boolean(
+      (
+        cfg.practice.whatsappTel ||
+        cfg.practice.whatsapp ||
+        cfg.practice.phoneTel ||
+        cfg.practice.phone ||
+        ""
+      ).replace(/\D/g, "")
+    );
+    bar.hidden = !hasContact;
   }
 
   // -------------------------------------------------------------------------
@@ -433,8 +450,11 @@
           .join("")
           .toUpperCase();
 
+        const photoAttrs = d.photoPosition
+          ? ` data-photo-position style="--photo-position: ${escapeAttr(d.photoPosition)}"`
+          : "";
         const photo = d.photoUrl
-          ? `<img src="${escapeAttr(d.photoUrl)}" alt="${escapeAttr(d.name)}" loading="lazy" decoding="async" />`
+          ? `<img src="${escapeAttr(d.photoUrl)}" alt="${escapeAttr(d.name)}" loading="lazy" decoding="async"${photoAttrs} />`
           : `<div class="dentist-card__placeholder" aria-hidden="true">${escapeHtml(initials)}</div>`;
 
         return `
@@ -824,8 +844,13 @@
     }
 
     section.hidden = false;
-    const query = encodeURIComponent(addr.mapsQuery || fullAddress);
-    const mapsEmbed = `https://www.google.com/maps?q=${query}&output=embed`;
+    // Prefer exact lat/lng (resolved from the clinic's Maps share link) over a
+    // free-text search, which can drift to the wrong nearby result.
+    const coords = addr.coords;
+    const query = coords
+      ? `${coords.lat},${coords.lng}`
+      : encodeURIComponent(addr.mapsQuery || fullAddress);
+    const mapsEmbed = `https://www.google.com/maps?q=${query}&z=17&output=embed`;
     const mapsLink = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 
     const hoursRows = DAY_ORDER.map((day) => {
@@ -900,7 +925,24 @@
           <div>
             <h3>${escapeHtml(t("footer.contact"))}</h3>
             <ul class="site-footer__list">
-              <li><a href="${whatsappHref()}" target="_blank" rel="noopener noreferrer">${escapeHtml(cfg.practice.phone || "")}</a></li>
+              ${
+                cfg.practice.phone
+                  ? `<li><a href="tel:${escapeAttr(
+                      (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "")
+                    )}">${escapeHtml(cfg.practice.phone)}</a></li>`
+                  : ""
+              }
+              ${
+                cfg.practice.whatsapp || cfg.practice.whatsappTel
+                  ? `<li><a href="${whatsappHref(
+                      lang === "es"
+                        ? "Hola, me gustaría agendar una cita"
+                        : "Hello, I would like to book an appointment"
+                    )}" target="_blank" rel="noopener noreferrer">WhatsApp: ${escapeHtml(
+                      cfg.practice.whatsapp || cfg.practice.phone || ""
+                    )}</a></li>`
+                  : ""
+              }
               ${
                 cfg.practice.email
                   ? `<li><a href="mailto:${escapeAttr(cfg.practice.email)}">${escapeHtml(

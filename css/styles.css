@@ -309,8 +309,10 @@ body.nav-open .site-header.is-hidden {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.55rem;
   min-height: 44px;
+  min-width: 0;
+  max-width: min(42vw, 14rem);
   font-weight: 750;
   font-size: 1.125rem;
   letter-spacing: -0.02em;
@@ -319,10 +321,18 @@ body.nav-open .site-header.is-hidden {
   margin-right: auto;
 }
 
+.brand__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .brand__logo {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
   object-fit: contain;
+  border-radius: 50%;
 }
 
 .brand__mark {
@@ -500,6 +510,8 @@ body.nav-open {
 @media (min-width: 768px) {
   .hero__content {
     padding-top: 5.5rem;
+    margin: 0;
+    margin-left: max(1rem, calc((100vw - var(--container)) / 2));
   }
 }
 
@@ -793,6 +805,11 @@ body.nav-open {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+}
+
+.dentist-card__photo img[data-photo-position] {
+  object-position: var(--photo-position, center center);
 }
 
 .dentist-card__placeholder {
@@ -1079,8 +1096,8 @@ body.nav-open {
 .insurance__logos li {
   display: grid;
   place-items: center;
-  min-height: 72px;
-  padding: 0.85rem 1rem;
+  min-height: 88px;
+  padding: 0.75rem 1.1rem;
   background: var(--color-surface);
   border: 1px solid rgba(215, 226, 234, 0.9);
   border-radius: var(--radius-md);
@@ -1089,9 +1106,9 @@ body.nav-open {
 }
 
 .insurance__logos img {
-  max-height: 40px;
+  height: 64px;
   width: auto;
-  max-width: 140px;
+  max-width: 200px;
   object-fit: contain;
   filter: grayscale(0.15);
   opacity: 0.92;
@@ -1099,18 +1116,13 @@ body.nav-open {
 
 @media (min-width: 768px) {
   .insurance__logos {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 220px));
+    justify-content: center;
   }
 
   .insurance__logos li:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-  }
-}
-
-@media (min-width: 1024px) {
-  .insurance__logos {
-    grid-template-columns: repeat(5, 1fr);
   }
 }
 
@@ -1477,23 +1489,34 @@ body.hero-loaded .hero__actions { transition-delay: 440ms; }
 
   .brand {
     margin-right: 0;
+    max-width: none;
   }
 
   .nav__list {
     flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 0.15rem;
+    gap: 0.05rem;
     padding: 0;
   }
 
   .nav__link {
     min-height: 40px;
-    padding: 0.4rem 0.7rem;
-    font-size: 0.95rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .btn--header-cta {
+    min-height: 40px;
+    padding-inline: 1rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .header-actions {
-    margin-left: 0.5rem;
+    margin-left: 0.25rem;
+    flex-shrink: 0;
   }
 }
 
