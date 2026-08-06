@@ -259,6 +259,7 @@ const config = {
         es: "La Dra. Pérez brinda atención quirúrgica maxilofacial especializada, desde extracciones complejas hasta cirugía oral avanzada, con enfoque en seguridad y comodidad.",
       },
       photoUrl: "assets/images/sonria/team/Dra-luisaPerez.jpeg",
+      photoPosition: "center 20%",
     },
     {
       name: "Dr. Victor Pineda",
