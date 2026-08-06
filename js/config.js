@@ -41,6 +41,9 @@ const config = {
       zip: "",
       mapsQuery:
         "Bulevard 4to. Centenario frente a Agencia de Banco Atlántida, Comayagua, Honduras",
+      // Exact pin resolved from the clinic's Google Maps share link — use this
+      // for the embed/directions so it doesn't fall back to a fuzzy text search.
+      coords: { lat: 14.4603009, lng: -87.6451345 },
     },
 
     hours: {

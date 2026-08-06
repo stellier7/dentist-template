@@ -844,8 +844,13 @@
     }
 
     section.hidden = false;
-    const query = encodeURIComponent(addr.mapsQuery || fullAddress);
-    const mapsEmbed = `https://www.google.com/maps?q=${query}&output=embed`;
+    // Prefer exact lat/lng (resolved from the clinic's Maps share link) over a
+    // free-text search, which can drift to the wrong nearby result.
+    const coords = addr.coords;
+    const query = coords
+      ? `${coords.lat},${coords.lng}`
+      : encodeURIComponent(addr.mapsQuery || fullAddress);
+    const mapsEmbed = `https://www.google.com/maps?q=${query}&z=17&output=embed`;
     const mapsLink = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 
     const hoursRows = DAY_ORDER.map((day) => {
