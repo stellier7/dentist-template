@@ -138,18 +138,20 @@
     if (!brand) return;
 
     const logoUrl = cfg.branding.logoUrl;
-    const initials = cfg.practice.name
+    const displayName = cfg.practice.shortName || cfg.practice.name;
+    const initials = displayName
       .split(/\s+/)
       .slice(0, 2)
       .map((w) => w[0] || "")
       .join("")
       .toUpperCase();
 
+    brand.setAttribute("aria-label", cfg.practice.name);
     brand.innerHTML = logoUrl
       ? `<img class="brand__logo" src="${escapeAttr(logoUrl)}" alt="${escapeAttr(cfg.practice.name)} logo" />
-         <span class="brand__name">${escapeHtml(cfg.practice.name)}</span>`
+         <span class="brand__name">${escapeHtml(displayName)}</span>`
       : `<span class="brand__mark" aria-hidden="true">${escapeHtml(initials)}</span>
-         <span class="brand__name">${escapeHtml(cfg.practice.name)}</span>`;
+         <span class="brand__name">${escapeHtml(displayName)}</span>`;
   }
 
   function renderNav() {

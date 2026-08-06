@@ -18,6 +18,8 @@ const config = {
   // ---------------------------------------------------------------------------
   practice: {
     name: "Centro de Especialidades Dentales Sonría",
+    // Shorter label for the sticky header (logo already carries full brand)
+    shortName: "Sonría",
 
     tagline: {
       en: "The best service in everything related to dentistry.",
@@ -78,12 +80,12 @@ const config = {
       nav: {
         home: "Home",
         services: "Services",
-        dentists: "Our Team",
+        dentists: "Team",
         gallery: "Gallery",
         testimonials: "Reviews",
         insurance: "Financing",
         location: "Location",
-        book: "Book Appointment",
+        book: "Book",
         openMenu: "Open menu",
         closeMenu: "Close menu",
       },
@@ -149,12 +151,12 @@ const config = {
       nav: {
         home: "Inicio",
         services: "Servicios",
-        dentists: "Nuestro Equipo",
+        dentists: "Equipo",
         gallery: "Galería",
         testimonials: "Opiniones",
         insurance: "Financiamiento",
         location: "Ubicación",
-        book: "Agendar Cita",
+        book: "Agendar",
         openMenu: "Abrir menú",
         closeMenu: "Cerrar menú",
       },

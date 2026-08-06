@@ -309,8 +309,10 @@ body.nav-open .site-header.is-hidden {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.55rem;
   min-height: 44px;
+  min-width: 0;
+  max-width: min(42vw, 14rem);
   font-weight: 750;
   font-size: 1.125rem;
   letter-spacing: -0.02em;
@@ -319,10 +321,18 @@ body.nav-open .site-header.is-hidden {
   margin-right: auto;
 }
 
+.brand__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .brand__logo {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
   object-fit: contain;
+  border-radius: 50%;
 }
 
 .brand__mark {
@@ -345,12 +355,7 @@ body.nav-open .site-header.is-hidden {
 }
 
 .lang-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.15rem;
-  padding: 0.15rem;
-  border-radius: 999px;
-  background: rgba(15, 40, 70, 0.08);
+  display: none;
 }
 
 .lang-toggle__btn {
@@ -1477,23 +1482,34 @@ body.hero-loaded .hero__actions { transition-delay: 440ms; }
 
   .brand {
     margin-right: 0;
+    max-width: none;
   }
 
   .nav__list {
     flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 0.15rem;
+    gap: 0.05rem;
     padding: 0;
   }
 
   .nav__link {
     min-height: 40px;
-    padding: 0.4rem 0.7rem;
-    font-size: 0.95rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .btn--header-cta {
+    min-height: 40px;
+    padding-inline: 1rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .header-actions {
-    margin-left: 0.5rem;
+    margin-left: 0.25rem;
+    flex-shrink: 0;
   }
 }
 
