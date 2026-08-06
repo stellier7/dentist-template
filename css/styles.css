@@ -345,7 +345,12 @@ body.nav-open .site-header.is-hidden {
 }
 
 .lang-toggle {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.15rem;
+  border-radius: 999px;
+  background: rgba(15, 40, 70, 0.08);
 }
 
 .lang-toggle__btn {
@@ -1099,18 +1104,13 @@ body.nav-open {
 
 @media (min-width: 768px) {
   .insurance__logos {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 220px));
+    justify-content: center;
   }
 
   .insurance__logos li:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-  }
-}
-
-@media (min-width: 1024px) {
-  .insurance__logos {
-    grid-template-columns: repeat(5, 1fr);
   }
 }
 
