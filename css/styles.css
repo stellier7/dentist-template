@@ -510,6 +510,8 @@ body.nav-open {
 @media (min-width: 768px) {
   .hero__content {
     padding-top: 5.5rem;
+    margin: 0;
+    margin-left: max(1rem, calc((100vw - var(--container)) / 2));
   }
 }
 
