@@ -195,11 +195,18 @@
   }
 
   function whatsappHref(message = "") {
-    const digits = (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "");
+    // Prefer dedicated WhatsApp number; fall back to phoneTel / phone.
+    // Digits should include country code (e.g. 50487748370 for Honduras).
+    const digits = (
+      cfg.practice.whatsappTel ||
+      cfg.practice.whatsapp ||
+      cfg.practice.phoneTel ||
+      cfg.practice.phone ||
+      ""
+    ).replace(/\D/g, "");
     if (!digits) return "#";
-    
-    // WhatsApp link format: https://wa.me/1234567890?text=Message
-    const baseUrl = `https://wa.me/1${digits}`;
+
+    const baseUrl = `https://wa.me/${digits}`;
     if (message) {
       const encodedMessage = encodeURIComponent(message);
       return `${baseUrl}?text=${encodedMessage}`;
@@ -232,8 +239,16 @@
     const bar = document.querySelector("[data-sticky-bar]");
     if (!bar) return;
     // Always useful when phone exists; hide only if no phone configured
-    const hasPhone = Boolean((cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, ""));
-    bar.hidden = !hasPhone;
+    const hasContact = Boolean(
+      (
+        cfg.practice.whatsappTel ||
+        cfg.practice.whatsapp ||
+        cfg.practice.phoneTel ||
+        cfg.practice.phone ||
+        ""
+      ).replace(/\D/g, "")
+    );
+    bar.hidden = !hasContact;
   }
 
   // -------------------------------------------------------------------------
@@ -900,7 +915,24 @@
           <div>
             <h3>${escapeHtml(t("footer.contact"))}</h3>
             <ul class="site-footer__list">
-              <li><a href="${whatsappHref()}" target="_blank" rel="noopener noreferrer">${escapeHtml(cfg.practice.phone || "")}</a></li>
+              ${
+                cfg.practice.phone
+                  ? `<li><a href="tel:${escapeAttr(
+                      (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "")
+                    )}">${escapeHtml(cfg.practice.phone)}</a></li>`
+                  : ""
+              }
+              ${
+                cfg.practice.whatsapp || cfg.practice.whatsappTel
+                  ? `<li><a href="${whatsappHref(
+                      lang === "es"
+                        ? "Hola, me gustaría agendar una cita"
+                        : "Hello, I would like to book an appointment"
+                    )}" target="_blank" rel="noopener noreferrer">WhatsApp: ${escapeHtml(
+                      cfg.practice.whatsapp || cfg.practice.phone || ""
+                    )}</a></li>`
+                  : ""
+              }
               ${
                 cfg.practice.email
                   ? `<li><a href="mailto:${escapeAttr(cfg.practice.email)}">${escapeHtml(

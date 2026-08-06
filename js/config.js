@@ -1,12 +1,9 @@
 /**
  * =============================================================================
- * CLIENT CONFIG — SINGLE SOURCE OF TRUTH
+ * CLIENT CONFIG — Centro de Especialidades Dentales Sonría
  * =============================================================================
- * Edit THIS FILE ONLY when customizing for a new dental practice.
- * Every label, nav item, section header, button, bio, service, and testimonial
- * is pulled from here at render time. Do not hardcode copy in HTML/CSS/JS.
- *
- * Languages: English (en) and Spanish (es). Default language is Spanish.
+ * Branch: cursor/centro-sonria-b5c1
+ * Images: assets/images/sonria/
  * =============================================================================
  */
 
@@ -14,81 +11,68 @@ const config = {
   // ---------------------------------------------------------------------------
   // SITE DEFAULTS
   // ---------------------------------------------------------------------------
-  // REQUIRED — default language when a visitor first loads the site ("es" | "en")
   defaultLanguage: "es",
 
   // ---------------------------------------------------------------------------
   // PRACTICE INFO
   // ---------------------------------------------------------------------------
   practice: {
-    // REQUIRED — shown in hero, nav, footer, page title
-    name: "Sonrisa Dental",
+    name: "Centro de Especialidades Dentales Sonría",
 
-    // REQUIRED — warm one-line tagline under the practice name
     tagline: {
-      en: "Gentle care for healthier, brighter smiles.",
-      es: "Cuidado gentil para sonrisas más sanas y radiantes.",
+      en: "The best service in everything related to dentistry.",
+      es: "El mejor servicio en todo lo relacionado con la Odontología.",
     },
 
-    // REQUIRED — used for click-to-call (tel:) links. Digits only recommended for telHref.
-    phone: "(305) 555-0148",
-    // REQUIRED — raw digits for tel: links (no spaces or punctuation)
-    phoneTel: "3055550148",
+    // Landline (display). Brand materials show 2772-2832.
+    phone: "+504 2772-2832",
+    phoneTel: "50427722832",
 
-    // REQUIRED — display address and map/directions helpers
+    // WhatsApp for booking CTAs (different from landline)
+    whatsapp: "+504 8774-8370",
+    whatsappTel: "50487748370",
+
     address: {
-      street: "1842 Coral Way",
-      city: "Miami",
-      state: "FL",
-      zip: "33145",
-      // OPTIONAL — override the Google Maps query; leave blank to auto-build from address
-      mapsQuery: "",
+      street: "Bulevard 4to. Centenario, frente a Agencia de Banco Atlántida",
+      city: "Comayagua",
+      state: "Honduras",
+      zip: "",
+      mapsQuery:
+        "Bulevard 4to. Centenario frente a Agencia de Banco Atlántida, Comayagua, Honduras",
     },
 
-    // REQUIRED — hours shown in Location + Footer. Use empty string to omit a day.
     hours: {
-      mon: "9:00 AM – 6:00 PM",
-      tue: "9:00 AM – 6:00 PM",
-      wed: "9:00 AM – 6:00 PM",
-      thu: "9:00 AM – 6:00 PM",
-      fri: "9:00 AM – 4:00 PM",
-      sat: "9:00 AM – 1:00 PM",
-      sun: "", // closed / leave blank to hide
+      mon: "8:00 AM – 5:00 PM",
+      tue: "8:00 AM – 5:00 PM",
+      wed: "8:00 AM – 5:00 PM",
+      thu: "8:00 AM – 5:00 PM",
+      fri: "8:00 AM – 5:00 PM",
+      sat: "8:00 AM – 1:00 PM",
+      sun: "",
     },
 
-    // OPTIONAL — email shown in footer when present
-    email: "hola@sonrisadental.com",
+    email: "cedsonria12101@gmail.com",
 
-    // OPTIONAL — trust bar stats (leave a field blank to hide that trust item)
-    yearsInPractice: "15+",
-    patientRating: "4.9",
-    // OPTIONAL — short insurance blurb for trust bar
-    insuranceAccepted: true,
+    yearsInPractice: "",
+    patientRating: "",
+    insuranceAccepted: false,
   },
 
   // ---------------------------------------------------------------------------
-  // BRANDING
+  // BRANDING — light blue clinical palette (clinic request + logo blues)
   // ---------------------------------------------------------------------------
   branding: {
-    // REQUIRED — soft clinical blue (CSS color value)
-    primaryColor: "#3A7CA5",
-    // REQUIRED — warmer accent for CTAs / highlights (avoid neon or flashy tones)
-    accentColor: "#2F9B8A",
-    // OPTIONAL — deeper shade for hover states; leave blank to auto-derive
-    primaryDark: "#2E6284",
-    // OPTIONAL — soft page wash behind sections
-    softBg: "#F4F8FB",
-    // OPTIONAL — path or URL to logo (leave blank to show practice name as text logo)
-    logoUrl: "",
-    // REQUIRED — full-bleed hero image (place file in /assets/images/)
-    // Demo template image included — replace per client
-    heroImageUrl: "assets/images/hero.jpg",
+    primaryColor: "#4BA3D9",
+    accentColor: "#2E8BC8",
+    primaryDark: "#2A6F9E",
+    softBg: "#EBF6FC",
+    logoUrl: "assets/images/sonria/logo/IMG_0164.jpeg",
+    heroImageUrl: "assets/images/sonria/hero/IMG_0162.jpeg",
   },
 
   // ---------------------------------------------------------------------------
-  // UI COPY (labels, nav, section headers, buttons) — per language
+  // UI COPY
   // ---------------------------------------------------------------------------
-  // REQUIRED — edit wording if needed; structure keys must stay in sync with app.js
   ui: {
     en: {
       nav: {
@@ -105,27 +89,27 @@ const config = {
       },
       hero: {
         badge: "New Patients Welcome",
-        cta: "Book Appointment",
+        cta: "Book on WhatsApp",
       },
       trust: {
         years: "Years in practice",
         rating: "Patient rating",
         insurance: "Insurance accepted",
-        licensed: "Licensed & certified",
+        licensed: "Specialists in every area",
       },
       sections: {
         services: "Our Services",
-        servicesLead: "Comprehensive care for every smile.",
-        dentists: "Meet the Dentist",
-        dentistsLead: "Care that feels personal from the first visit.",
-        gallery: "Smile Gallery",
-        galleryLead: "Real results from patients like you.",
+        servicesLead: "Comprehensive specialty care for every smile.",
+        dentists: "Meet Our Team",
+        dentistsLead: "Specialists dedicated to your oral health in Comayagua.",
+        gallery: "Our Clinic",
+        galleryLead: "Care, specialties, and smiles at Sonría.",
         testimonials: "What Patients Say",
         testimonialsLead: "Trusted by families in our community.",
         insurance: "Insurance & Financing",
-        insuranceLead: "We work with major providers to keep care accessible.",
+        insuranceLead: "Ask us about payment options for your treatment.",
         location: "Visit Us",
-        locationLead: "Conveniently located — we look forward to seeing you.",
+        locationLead: "On Bulevard 4to. Centenario — we look forward to seeing you.",
       },
       services: {
         expand: "Learn more",
@@ -133,7 +117,7 @@ const config = {
       },
       location: {
         hours: "Hours",
-        call: "Call Us",
+        call: "WhatsApp",
         directions: "Get Directions",
         closed: "Closed",
         days: {
@@ -147,7 +131,7 @@ const config = {
         },
       },
       stickyBar: {
-        cta: "Book Appointment",
+        cta: "Book on WhatsApp",
       },
       footer: {
         contact: "Contact",
@@ -176,27 +160,27 @@ const config = {
       },
       hero: {
         badge: "Nuevos Pacientes Bienvenidos",
-        cta: "Agendar Cita",
+        cta: "Agendar por WhatsApp",
       },
       trust: {
         years: "Años de experiencia",
         rating: "Calificación de pacientes",
         insurance: "Aceptamos seguros",
-        licensed: "Licenciados y certificados",
+        licensed: "Especialistas en cada área",
       },
       sections: {
         services: "Nuestros Servicios",
-        servicesLead: "Cuidado integral para cada sonrisa.",
-        dentists: "Conoce al Dentista",
-        dentistsLead: "Atención cercana desde la primera visita.",
-        gallery: "Galería de Sonrisas",
-        galleryLead: "Resultados reales de pacientes como tú.",
+        servicesLead: "Atención integral en todas las especialidades odontológicas.",
+        dentists: "Nuestro Equipo",
+        dentistsLead: "Especialistas dedicados a tu salud oral en Comayagua.",
+        gallery: "Nuestra Clínica",
+        galleryLead: "Cuidado, especialidades y sonrisas en Sonría.",
         testimonials: "Lo Que Dicen Nuestros Pacientes",
         testimonialsLead: "La confianza de familias de nuestra comunidad.",
         insurance: "Seguros y Financiamiento",
-        insuranceLead: "Trabajamos con las principales aseguradoras.",
+        insuranceLead: "Consulta con nosotros las opciones de pago para tu tratamiento.",
         location: "Visítanos",
-        locationLead: "Ubicación conveniente — te esperamos con gusto.",
+        locationLead: "En el Bulevard 4to. Centenario — te esperamos con gusto.",
       },
       services: {
         expand: "Ver más",
@@ -204,7 +188,7 @@ const config = {
       },
       location: {
         hours: "Horario",
-        call: "Llámanos",
+        call: "WhatsApp",
         directions: "Cómo Llegar",
         closed: "Cerrado",
         days: {
@@ -218,7 +202,7 @@ const config = {
         },
       },
       stickyBar: {
-        cta: "Agendar Cita",
+        cta: "Agendar por WhatsApp",
       },
       footer: {
         contact: "Contacto",
@@ -237,163 +221,172 @@ const config = {
   // ---------------------------------------------------------------------------
   // DENTISTS
   // ---------------------------------------------------------------------------
-  // REQUIRED — at least one dentist. Empty array hides the whole section.
   dentists: [
     {
-      name: "Dr. Carlos Mendoza",
+      name: "Dr. Guillermo Peña",
       title: {
-        en: "Lead Dentist · DDS",
-        es: "Dentista Principal · DDS",
+        en: "Orthodontics Specialist",
+        es: "Especialista en Ortodoncia",
       },
       bio: {
-        en: "Dr. Mendoza has cared for Miami families for over a decade. He believes great dentistry starts with listening — and that every visit should feel calm, clear, and kind.",
-        es: "El Dr. Mendoza ha cuidado a familias de Miami por más de una década. Cree que una gran odontología empieza escuchando — y que cada visita debe sentirse calmada, clara y cercana.",
+        en: "Dr. Peña specializes in orthodontics, helping patients of all ages achieve aligned, healthy smiles with personalized treatment plans.",
+        es: "El Dr. Peña se especializa en ortodoncia, ayudando a pacientes de todas las edades a lograr sonrisas alineadas y saludables con planes de tratamiento personalizados.",
       },
-      // OPTIONAL — path/URL; leave blank for initials placeholder
-      // Demo template image included — replace per client
-      photoUrl: "assets/images/dentist.jpg",
+      photoUrl: "assets/images/sonria/team/dr-guillermoPena.jpeg",
+    },
+    {
+      name: "Dra. Waldina Rivera",
+      title: {
+        en: "General Dentistry · Pediatric Dentistry Diploma · Interceptive Appliances",
+        es: "Odontología General · Diplomado en Odontología Infantil · Aparatología Interceptiva",
+      },
+      bio: {
+        en: "Dra. Rivera combines general dentistry with pediatric training and interceptive appliances, creating a warm experience for children and families.",
+        es: "La Dra. Rivera combina odontología general con formación en odontología infantil y aparatología interceptiva, creando una experiencia cálida para niños y familias.",
+      },
+      photoUrl: "assets/images/sonria/team/Dra-waldina.jpeg",
+    },
+    {
+      name: "Dra. Luisa Pérez",
+      title: {
+        en: "Maxillofacial Surgery",
+        es: "Cirugía Maxilofacial",
+      },
+      bio: {
+        en: "Dra. Pérez provides specialized maxillofacial surgical care, from complex extractions to advanced oral surgery with a focus on safety and comfort.",
+        es: "La Dra. Pérez brinda atención quirúrgica maxilofacial especializada, desde extracciones complejas hasta cirugía oral avanzada, con enfoque en seguridad y comodidad.",
+      },
+      photoUrl: "assets/images/sonria/team/Dra-luisaPerez.jpeg",
+    },
+    {
+      name: "Dr. Victor Pineda",
+      title: {
+        en: "Oral Rehabilitation & Implantology",
+        es: "Rehabilitación Oral e Implantología",
+      },
+      bio: {
+        en: "Dr. Pineda restores function and aesthetics through oral rehabilitation and dental implants, helping patients smile, speak, and eat with confidence again.",
+        es: "El Dr. Pineda restaura función y estética mediante rehabilitación oral e implantes dentales, ayudando a los pacientes a sonreír, hablar y comer con confianza nuevamente.",
+      },
+      photoUrl: "assets/images/sonria/team/Dr-victorPineda.jpeg",
     },
   ],
 
   // ---------------------------------------------------------------------------
   // SERVICES
   // ---------------------------------------------------------------------------
-  // REQUIRED for Services section. Empty array hides the section.
-  // icon: short key used by app.js to pick an inline SVG ("cleaning", "whitening",
-  // "aligners", "emergency", "implants", "pediatric", "general", "cosmetic")
   services: [
     {
-      name: { en: "Cleanings & Exams", es: "Limpiezas y Exámenes" },
+      name: { en: "Orthodontics", es: "Ortodoncia" },
       description: {
-        en: "Gentle preventive care to keep gums healthy and catch concerns early — comfortable visits for the whole family.",
-        es: "Cuidado preventivo suave para mantener encías sanas y detectar problemas a tiempo — visitas cómodas para toda la familia.",
-      },
-      icon: "cleaning",
-    },
-    {
-      name: { en: "Teeth Whitening", es: "Blanqueamiento Dental" },
-      description: {
-        en: "Professional whitening for a brighter smile with results that look natural — not overdone.",
-        es: "Blanqueamiento profesional para una sonrisa más luminosa con resultados naturales — nada exagerado.",
-      },
-      icon: "whitening",
-    },
-    {
-      name: { en: "Invisalign", es: "Invisalign" },
-      description: {
-        en: "Clear aligners that straighten teeth discreetly, with personalized plans and check-ins along the way.",
-        es: "Alineadores transparentes que enderezan los dientes con discreción, con planes personalizados y seguimientos.",
+        en: "Braces and alignment treatments that straighten teeth and improve bite for a healthier, more confident smile.",
+        es: "Tratamientos de brackets y alineación que enderezan los dientes y mejoran la mordida para una sonrisa más sana y confiada.",
       },
       icon: "aligners",
     },
     {
-      name: { en: "Emergency Care", es: "Atención de Emergencia" },
+      name: { en: "Pediatric Dentistry", es: "Odontopediatría" },
       description: {
-        en: "Same-day help for toothaches, chips, and urgent concerns — call us and we’ll do our best to see you quickly.",
-        es: "Ayuda el mismo día para dolores, fracturas y urgencias — llámanos y haremos lo posible por atenderte pronto.",
+        en: "Gentle dental care for children in a friendly environment that builds healthy habits from an early age.",
+        es: "Cuidado dental gentil para niños en un ambiente amigable que forma hábitos saludables desde temprana edad.",
+      },
+      icon: "pediatric",
+    },
+    {
+      name: { en: "Maxillofacial Surgery", es: "Maxilofacial" },
+      description: {
+        en: "Specialized oral and maxillofacial surgery for extractions, trauma, and complex surgical needs.",
+        es: "Cirugía oral y maxilofacial especializada para extracciones, trauma y necesidades quirúrgicas complejas.",
       },
       icon: "emergency",
     },
     {
+      name: { en: "General Dentistry", es: "Odontología General" },
+      description: {
+        en: "Complete preventive and restorative care for the whole family — exams, cleanings, and everyday treatments.",
+        es: "Cuidado preventivo y restaurador completo para toda la familia — exámenes, limpiezas y tratamientos del día a día.",
+      },
+      icon: "general",
+    },
+    {
+      name: { en: "Endodontics", es: "Endodoncia" },
+      description: {
+        en: "Root canal treatments performed with precision to relieve pain and save your natural teeth.",
+        es: "Tratamientos de conducto realizados con precisión para aliviar el dolor y conservar tus dientes naturales.",
+      },
+      icon: "emergency",
+    },
+    {
+      name: { en: "Radiology", es: "Radiología" },
+      description: {
+        en: "Diagnostic imaging that helps our specialists plan accurate, safer treatments for every case.",
+        es: "Imágenes diagnósticas que ayudan a nuestros especialistas a planificar tratamientos más precisos y seguros.",
+      },
+      icon: "general",
+    },
+    {
+      name: { en: "Oral Rehabilitation", es: "Rehabilitación Oral" },
+      description: {
+        en: "Full restorative solutions that rebuild function, comfort, and the natural look of your smile.",
+        es: "Soluciones restauradoras integrales que recuperan la función, comodidad y apariencia natural de tu sonrisa.",
+      },
+      icon: "cosmetic",
+    },
+    {
+      name: { en: "Periodontics", es: "Periodoncia" },
+      description: {
+        en: "Gum care focused on preventing and treating periodontal disease for a strong foundation.",
+        es: "Cuidado de las encías enfocado en prevenir y tratar la enfermedad periodontal para una base sólida.",
+      },
+      icon: "cleaning",
+    },
+    {
+      name: { en: "Dental Restoration", es: "Restauración Dental" },
+      description: {
+        en: "Fillings and restorations that repair damaged teeth while blending naturally with your smile.",
+        es: "Rellenos y restauraciones que reparan dientes dañados integrándose naturalmente con tu sonrisa.",
+      },
+      icon: "general",
+    },
+    {
       name: { en: "Dental Implants", es: "Implantes Dentales" },
       description: {
-        en: "Restore missing teeth with durable, natural-looking implants planned for comfort and long-term function.",
-        es: "Recupera dientes perdidos con implantes duraderos y de aspecto natural, pensados para comodidad y función.",
+        en: "Durable, natural-looking implants that replace missing teeth and restore full bite function.",
+        es: "Implantes duraderos y de aspecto natural que reemplazan dientes perdidos y restauran la función de mordida.",
       },
       icon: "implants",
     },
-    {
-      name: { en: "Pediatric Dentistry", es: "Odontología Pediátrica" },
-      description: {
-        en: "Friendly visits that help kids feel at ease — building healthy habits and confident little smiles.",
-        es: "Visitas amables que ayudan a los niños a sentirse tranquilos — creando hábitos sanos y sonrisas confiadas.",
-      },
-      icon: "pediatric",
-    },
   ],
 
   // ---------------------------------------------------------------------------
-  // TESTIMONIALS
+  // TESTIMONIALS — none provided yet; empty hides section
   // ---------------------------------------------------------------------------
-  // OPTIONAL — empty array hides the Testimonials section entirely.
-  testimonials: [
-    {
-      quote: {
-        en: "The team made my first visit so easy. Clear explanations, gentle care, and I finally look forward to cleanings.",
-        es: "El equipo hizo mi primera visita muy fácil. Explicaciones claras, cuidado gentil, y por fin espero con gusto las limpiezas.",
-      },
-      author: "María G.",
-      rating: 5,
-    },
-    {
-      quote: {
-        en: "Dr. Morales is wonderful with our kids. The office feels calm — never rushed — and everyone is so kind.",
-        es: "La Dra. Morales es maravillosa con nuestros hijos. El consultorio se siente calmado — nunca con prisa — y todos son muy amables.",
-      },
-      author: "Carlos R.",
-      rating: 5,
-    },
-    {
-      quote: {
-        en: "I started Invisalign here and the process has been smooth from day one. Highly recommend.",
-        es: "Empecé Invisalign aquí y el proceso ha sido fluido desde el primer día. Los recomiendo mucho.",
-      },
-      author: "Ana L.",
-      rating: 5,
-    },
-  ],
+  testimonials: [],
 
   // ---------------------------------------------------------------------------
-  // INSURANCE LOGOS
+  // INSURANCE — none provided yet; empty hides section
   // ---------------------------------------------------------------------------
-  // OPTIONAL — array of image URLs/paths. Empty array hides Insurance section.
-  // Tip: drop SVGs/PNGs in /assets/images/insurance/ and reference them here.
-  insuranceLogos: [
-    {
-      name: "Delta Dental",
-      src: "assets/images/insurance/delta-dental.svg",
-    },
-    {
-      name: "Cigna",
-      src: "assets/images/insurance/cigna.svg",
-    },
-    {
-      name: "Aetna",
-      src: "assets/images/insurance/aetna.svg",
-    },
-    {
-      name: "MetLife",
-      src: "assets/images/insurance/metlife.svg",
-    },
-    {
-      name: "Guardian",
-      src: "assets/images/insurance/guardian.svg",
-    },
-  ],
+  insuranceLogos: [],
 
   // ---------------------------------------------------------------------------
-  // SMILE GALLERY
+  // GALLERY
   // ---------------------------------------------------------------------------
-  // OPTIONAL — empty array hides the Gallery section.
-  // Demo template images included — replace per client
   gallery: [
-    "assets/images/gallery/smile-01.jpg",
-    "assets/images/gallery/smile-02.jpg",
-    "assets/images/gallery/smile-03.jpg",
-    "assets/images/gallery/smile-04.jpg",
-    "assets/images/gallery/smile-05.jpg",
+    "assets/images/sonria/gallery/IMG_0166.jpeg",
+    "assets/images/sonria/gallery/IMG_0167.jpeg",
+    "assets/images/sonria/gallery/IMG_0168.jpeg",
+    "assets/images/sonria/gallery/IMG_0169.jpeg",
+    "assets/images/sonria/gallery/IMG_0170.jpeg",
+    "assets/images/sonria/gallery/IMG_0171.jpeg",
   ],
 
   // ---------------------------------------------------------------------------
   // SOCIAL LINKS
   // ---------------------------------------------------------------------------
-  // OPTIONAL — leave blank to hide that icon in the footer
-  // ⚠️ UPDATE THESE: Currently placeholder URLs. Replace with actual practice social profiles.
   socials: {
-    instagram: "", // e.g. "https://instagram.com/sonrisadental"
-    facebook: "", // e.g. "https://facebook.com/sonrisadental"
+    instagram: "",
+    facebook: "",
   },
 };
 
-// Expose globally for app.js (no bundler / no modules required)
 window.SITE_CONFIG = config;
