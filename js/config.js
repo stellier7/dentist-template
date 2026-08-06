@@ -106,8 +106,8 @@ const config = {
         galleryLead: "Care, specialties, and smiles at Sonría.",
         testimonials: "What Patients Say",
         testimonialsLead: "Trusted by families in our community.",
-        insurance: "Insurance & Financing",
-        insuranceLead: "Ask us about payment options for your treatment.",
+        insurance: "Financing Options",
+        insuranceLead: "We work with BAC and Ficohsa to make care more accessible.",
         location: "Visit Us",
         locationLead: "On Bulevard 4to. Centenario — we look forward to seeing you.",
       },
@@ -177,8 +177,8 @@ const config = {
         galleryLead: "Cuidado, especialidades y sonrisas en Sonría.",
         testimonials: "Lo Que Dicen Nuestros Pacientes",
         testimonialsLead: "La confianza de familias de nuestra comunidad.",
-        insurance: "Seguros y Financiamiento",
-        insuranceLead: "Consulta con nosotros las opciones de pago para tu tratamiento.",
+        insurance: "Opciones de Financiamiento",
+        insuranceLead: "Trabajamos con BAC y Ficohsa para que tu tratamiento sea más accesible.",
         location: "Visítanos",
         locationLead: "En el Bulevard 4to. Centenario — te esperamos con gusto.",
       },
@@ -364,9 +364,18 @@ const config = {
   testimonials: [],
 
   // ---------------------------------------------------------------------------
-  // INSURANCE — none provided yet; empty hides section
+  // FINANCING / INSURANCE LOGOS
   // ---------------------------------------------------------------------------
-  insuranceLogos: [],
+  insuranceLogos: [
+    {
+      name: "BAC Credomatic",
+      src: "assets/images/sonria/insurance/bac.jpeg",
+    },
+    {
+      name: "Ficohsa",
+      src: "assets/images/sonria/insurance/ficohsa.png",
+    },
+  ],
 
   // ---------------------------------------------------------------------------
   // GALLERY
