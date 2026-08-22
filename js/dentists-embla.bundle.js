@@ -1862,12 +1862,18 @@ var DentistsEmbla = (() => {
         loop: true,
         align: "center",
         containScroll: false,
-        skipSnaps: false
+        skipSnaps: false,
+        slides: ".dentist-card"
       },
       plugins
     );
+    if (!embla.internalEngine().options.loop) {
+      console.warn(
+        "Dentists carousel: Embla loop was disabled because slides are too wide. Neighbors and seamless wrap require narrower slides."
+      );
+    }
     const autoplay = plugins[0] ?? null;
-    return { embla, autoplay };
+    return { embla, autoplay, loopActive: embla.internalEngine().options.loop };
   }
   return __toCommonJS(dentists_embla_exports);
 })();
