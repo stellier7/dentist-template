@@ -399,8 +399,10 @@
   // -------------------------------------------------------------------------
   function renderDentists() {
     const section = document.querySelector('[data-section="dentists"]');
-    const grid = document.querySelector("[data-dentists-grid]");
-    if (!section || !grid) return;
+    const carousel = document.querySelector("[data-dentists-carousel]");
+    const viewport = document.querySelector("[data-dentists-viewport]");
+    const track = document.querySelector("[data-dentists-grid]");
+    if (!section || !carousel || !viewport || !track) return;
 
     const dentists = Array.isArray(cfg.dentists) ? cfg.dentists : [];
     if (!dentists.length) {
@@ -410,16 +412,17 @@
 
     section.hidden = false;
 
-    // Enable horizontal scroll for multiple dentists
-    if (dentists.length > 1) {
-      grid.setAttribute("data-scrollable", "true");
-      grid.setAttribute("data-vertical-scroll-chain", "");
+    const isCarousel = dentists.length > 1;
+    carousel.classList.toggle("dentists__carousel--active", isCarousel);
+    viewport.toggleAttribute("data-embla", isCarousel);
+
+    if (isCarousel) {
+      viewport.setAttribute("data-vertical-scroll-chain", "");
     } else {
-      grid.removeAttribute("data-scrollable");
-      grid.removeAttribute("data-vertical-scroll-chain");
+      viewport.removeAttribute("data-vertical-scroll-chain");
     }
 
-    grid.innerHTML = dentists
+    track.innerHTML = dentists
       .map((d) => {
         const initials = (d.name || "")
           .split(/\s+/)
@@ -527,170 +530,56 @@
     return false;
   }
 
+  // Gallery-only clone helper (dentists carousel uses Embla loop)
+
   // -------------------------------------------------------------------------
-  // Dentists Carousel (for multiple dentists)
+  // Dentists Carousel (Embla — loop + autoplay)
   // -------------------------------------------------------------------------
   function initDentistsCarousel() {
-    const grid = document.querySelector("[data-dentists-grid]");
-    if (!grid || grid.getAttribute("data-scrollable") !== "true") return;
+    const viewport = document.querySelector("[data-dentists-viewport]");
+    if (!viewport || !viewport.hasAttribute("data-embla")) return;
 
-    const realCards = getRealCarouselItems(grid, ".dentist-card");
-    if (realCards.length <= 1) return;
+    if (!window.DentistsEmbla?.initDentistsEmbla) {
+      console.error("DentistsEmbla bundle missing — run npm run build:dentists-embla");
+      return;
+    }
 
     const section = document.querySelector('[data-section="dentists"]');
     if (!section) return;
 
-    appendInfiniteClone(grid, realCards[0]);
-
-    const realCount = realCards.length;
-    let currentIndex = 0;
-    let autoScrollInterval = null;
-    let isPaused = true;
-    let hasStarted = false;
-    let scrollEndTimer = null;
-    let resumeTimer = null;
-    let userIsScrolling = false;
-
-    grid.style.scrollBehavior = "auto";
-    scrollCarouselItemToCenter(grid, realCards[0], "auto");
-    grid.style.scrollBehavior = "";
-
-    function centerCard(card, behavior = "smooth") {
-      if (!card) return;
-      scrollCarouselItemToCenter(grid, card, behavior);
-    }
-
-    function cardIsCentered(card) {
-      if (!card) return false;
-      const viewportCenter = grid.scrollLeft + grid.clientWidth / 2;
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-      return Math.abs(viewportCenter - cardCenter) <= card.offsetWidth * 0.12;
-    }
-
-    function syncCurrentIndex() {
-      currentIndex = getClosestCarouselIndex(grid, realCards);
-    }
-
-    // After scrolling right onto the end clone, shift scroll position in place
-    // so the real first card is shown without animating back to the left.
-    function snapEndCloneToStart() {
-      const endClone = grid.querySelector('[data-clone="end"]');
-      const realFirst = realCards[0];
-      if (!endClone || !realFirst || !cardIsCentered(endClone)) return false;
-
-      const delta = endClone.offsetLeft - realFirst.offsetLeft;
-      grid.style.scrollSnapType = "none";
-      grid.style.scrollBehavior = "auto";
-      grid.scrollLeft -= delta;
-      grid.style.scrollBehavior = "";
-      requestAnimationFrame(() => {
-        grid.style.scrollSnapType = "";
-      });
-
-      currentIndex = 0;
-      return true;
-    }
-
-    function scheduleAutoScrollResume() {
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => {
-        isPaused = false;
-        startAutoScroll();
-      }, 7000);
-    }
-
-    function onUserScrollStart() {
-      userIsScrolling = true;
-      pauseAutoScroll();
-      clearTimeout(resumeTimer);
-    }
-
-    function onScrollSettled() {
-      if (snapEndCloneToStart()) {
-        if (userIsScrolling) {
-          userIsScrolling = false;
-          scheduleAutoScrollResume();
-        }
-        return;
-      }
-
-      syncCurrentIndex();
-
-      if (userIsScrolling) {
-        userIsScrolling = false;
-        scheduleAutoScrollResume();
-      }
-    }
-
-    function advance() {
-      if (currentIndex < realCount - 1) {
-        currentIndex += 1;
-        centerCard(realCards[currentIndex]);
-        return;
-      }
-
-      const endClone = grid.querySelector('[data-clone="end"]');
-      centerCard(endClone);
-    }
-
-    function startAutoScroll() {
-      if (isPaused || autoScrollInterval) return;
-      autoScrollInterval = setInterval(advance, 5000);
-    }
-
-    function pauseAutoScroll() {
-      isPaused = true;
-      if (autoScrollInterval) {
-        clearInterval(autoScrollInterval);
-        autoScrollInterval = null;
-      }
-    }
-
-    grid.addEventListener("mouseenter", pauseAutoScroll);
-    grid.addEventListener("mouseleave", () => {
-      isPaused = false;
-      startAutoScroll();
+    const { embla, autoplay } = window.DentistsEmbla.initDentistsEmbla(viewport, {
+      delay: 5000,
+      reducedMotion: prefersReducedMotion.matches,
     });
-    grid.addEventListener("touchstart", onUserScrollStart, { passive: true });
-    grid.addEventListener("wheel", onUserScrollStart, { passive: true });
 
-    grid.addEventListener(
-      "scroll",
-      () => {
-        clearTimeout(scrollEndTimer);
-        scrollEndTimer = setTimeout(onScrollSettled, 120);
-      },
-      { passive: true }
-    );
+    if (!autoplay) return;
 
-    if ("onscrollend" in grid) {
-      grid.addEventListener("scrollend", onScrollSettled, { passive: true });
-    }
-
-    window.addEventListener(
-      "resize",
-      () => centerCard(realCards[currentIndex], "auto"),
-      { passive: true }
-    );
+    let hasStarted = false;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting || hasStarted) return;
-          hasStarted = true;
-          currentIndex = 0;
-          requestAnimationFrame(() => {
-            centerCard(realCards[0], "auto");
-            isPaused = false;
-            startAutoScroll();
-          });
-          observer.unobserve(section);
+          if (entry.isIntersecting) {
+            if (!hasStarted) {
+              hasStarted = true;
+              embla.scrollTo(0, true);
+            }
+            autoplay.play();
+          } else {
+            autoplay.stop();
+          }
         });
       },
       { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
     );
 
     observer.observe(section);
+
+    window.addEventListener(
+      "resize",
+      () => embla.reInit(),
+      { passive: true }
+    );
   }
 
   // -------------------------------------------------------------------------
