@@ -767,29 +767,39 @@ body.nav-open {
 /* ---------------------------------------------------------------------------
    Dentists
    --------------------------------------------------------------------------- */
-.dentists__grid {
+.dentists__carousel {
+  width: 100%;
+}
+
+.dentists__viewport {
+  overflow: hidden;
+}
+
+.dentists__track {
   display: grid;
   gap: 1.25rem;
 }
 
-/* When multiple dentists, enable horizontal scroll */
-.dentists__grid[data-scrollable="true"] {
-  --dentist-card-width: 90%;
-  display: flex;
-  gap: 0.75rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  overscroll-behavior-y: auto;
-  scrollbar-width: none;
-  padding: 0.25rem calc((100% - var(--dentist-card-width)) / 2) 1rem;
-  scroll-padding-inline: calc((100% - var(--dentist-card-width)) / 2);
+.dentists__carousel--active .dentists__viewport {
+  overflow: hidden;
 }
 
-.dentists__grid[data-scrollable="true"]::-webkit-scrollbar {
-  display: none;
+.dentists__carousel--active .dentists__track {
+  display: flex;
+  gap: 0.75rem;
+  touch-action: pan-y pinch-zoom;
+  margin-left: calc(var(--dentist-slide-spacing) * -1);
+}
+
+.dentists__carousel--active {
+  --dentist-slide-size: 90%;
+  --dentist-slide-spacing: 0.75rem;
+}
+
+.dentists__carousel--active .dentist-card {
+  flex: 0 0 var(--dentist-slide-size);
+  min-width: 0;
+  margin-left: var(--dentist-slide-spacing);
 }
 
 .dentist-card {
@@ -801,12 +811,6 @@ body.nav-open {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 220ms ease, transform 220ms var(--ease-out);
-}
-
-/* Peek adjacent cards; active card stays centered */
-.dentists__grid[data-scrollable="true"] .dentist-card {
-  flex: 0 0 var(--dentist-card-width);
-  scroll-snap-align: center;
 }
 
 .dentist-card__photo {
@@ -867,8 +871,8 @@ body.nav-open {
     aspect-ratio: 1;
   }
 
-  .dentists__grid[data-scrollable="true"] {
-    --dentist-card-width: min(82%, 760px);
+  .dentists__carousel--active {
+    --dentist-slide-size: min(82%, 760px);
   }
 }
 

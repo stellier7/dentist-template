@@ -138,7 +138,16 @@
             <h2 class="section__title" data-i18n="sections.dentists"></h2>
             <p class="section__lead" data-i18n="sections.dentistsLead"></p>
           </header>
-          <div class="dentists__grid" data-dentists-grid></div>
+          <div class="dentists__carousel" data-dentists-carousel>
+            <div
+              class="dentists__viewport"
+              data-dentists-viewport
+              data-vertical-scroll-chain
+              tabindex="0"
+            >
+              <div class="dentists__track" data-dentists-grid></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -235,6 +244,7 @@
 
     <!-- Config must load before app -->
     <script src="js/config.js"></script>
+    <script src="js/dentists-embla.bundle.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>
