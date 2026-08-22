@@ -422,7 +422,13 @@
       viewport.removeAttribute("data-vertical-scroll-chain");
     }
 
-    track.innerHTML = dentists
+    // Embla loop needs enough slide content; duplicate short lists in the track only.
+    const trackDentists =
+      isCarousel && dentists.length < 4
+        ? Array.from({ length: 4 }, (_, index) => dentists[index % dentists.length])
+        : dentists;
+
+    track.innerHTML = trackDentists
       .map((d) => {
         const initials = (d.name || "")
           .split(/\s+/)
@@ -547,12 +553,23 @@
     const section = document.querySelector('[data-section="dentists"]');
     if (!section) return;
 
-    const { embla, autoplay } = window.DentistsEmbla.initDentistsEmbla(viewport, {
+    const { embla, autoplay, loopActive } = window.DentistsEmbla.initDentistsEmbla(viewport, {
       delay: 5000,
       reducedMotion: prefersReducedMotion.matches,
     });
 
-    if (!autoplay) return;
+    viewport.dataset.emblaLoop = loopActive ? "true" : "false";
+
+    const refreshLoop = () => {
+      embla.internalEngine().slideLooper.loop();
+    };
+
+    embla.on("init", refreshLoop);
+    embla.on("reInit", refreshLoop);
+    embla.on("scroll", refreshLoop);
+    requestAnimationFrame(refreshLoop);
+
+    viewport._dentistsEmblaApi = embla;
 
     let hasStarted = false;
 
@@ -562,11 +579,10 @@
           if (entry.isIntersecting) {
             if (!hasStarted) {
               hasStarted = true;
-              embla.scrollTo(0, true);
             }
-            autoplay.play();
+            autoplay?.play();
           } else {
-            autoplay.stop();
+            autoplay?.stop();
           }
         });
       },
