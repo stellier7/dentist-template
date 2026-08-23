@@ -718,8 +718,9 @@
         const index = Number(btn.getAttribute("data-dot-index"));
         const card = track.children[index];
         if (card) {
+          const left = card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
           track.scrollTo({
-            left: card.offsetLeft,
+            left: Math.max(0, left),
             behavior: prefersReducedMotion.matches ? "auto" : "smooth",
           });
         }
@@ -730,9 +731,37 @@
   function initTestimonialsCarousel() {
     const track = document.querySelector("[data-testimonials-track]");
     const dots = document.querySelector("[data-testimonials-dots]");
+    const section = document.querySelector('[data-section="testimonials"]');
     if (!track || !dots) return;
 
-    // Keep dots in sync while swiping
+    const getActiveIndex = () => {
+      const cards = Array.from(track.children);
+      if (!cards.length) return 0;
+
+      const center = track.scrollLeft + track.clientWidth / 2;
+      let active = 0;
+      let best = Infinity;
+
+      cards.forEach((card, i) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(cardCenter - center);
+        if (dist < best) {
+          best = dist;
+          active = i;
+        }
+      });
+
+      return active;
+    };
+
+    const syncDots = () => {
+      const active = getActiveIndex();
+      dots.querySelectorAll(".testimonials__dot").forEach((dot, i) => {
+        if (i === active) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      });
+    };
+
     let ticking = false;
     track.addEventListener(
       "scroll",
@@ -740,112 +769,151 @@
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
-          const cards = Array.from(track.children);
-          if (!cards.length) {
-            ticking = false;
-            return;
-          }
-          const scrollLeft = track.scrollLeft;
-          let active = 0;
-          let best = Infinity;
-          cards.forEach((card, i) => {
-            const dist = Math.abs(card.offsetLeft - scrollLeft);
-            if (dist < best) {
-              best = dist;
-              active = i;
-            }
-          });
-          dots.querySelectorAll(".testimonials__dot").forEach((dot, i) => {
-            if (i === active) dot.setAttribute("aria-current", "true");
-            else dot.removeAttribute("aria-current");
-          });
+          syncDots();
           ticking = false;
         });
       },
       { passive: true }
     );
-    
-    // Auto-scroll testimonials
-    initTestimonialsAutoScroll(track);
+
+    initTestimonialsAutoScroll(track, section, getActiveIndex, syncDots);
   }
 
   // -------------------------------------------------------------------------
   // TESTIMONIALS AUTO-SCROLL
   // -------------------------------------------------------------------------
-  function initTestimonialsAutoScroll(track) {
+  function initTestimonialsAutoScroll(track, section, getActiveIndex, syncDots) {
     if (!track || prefersReducedMotion.matches) return;
-    
-    const cards = track.querySelectorAll('.testimonial-card');
-    if (cards.length === 0) return;
-    
-    let autoScrollInterval;
+
+    const cards = track.querySelectorAll(".testimonial-card");
+    if (cards.length <= 1) return;
+
+    let autoScrollInterval = null;
+    let resumeTimeout = null;
     let isPaused = false;
+    let isAutoScrolling = false;
     let currentIndex = 0;
-    
-    function scrollToCard(index) {
+    let sectionVisible = false;
+
+    function scrollToCard(index, behavior = "smooth") {
       const card = cards[index];
       if (!card) return;
-      
+
+      isAutoScrolling = true;
+      const left = card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
       track.scrollTo({
-        left: card.offsetLeft,
-        behavior: 'smooth'
+        left: Math.max(0, left),
+        behavior: prefersReducedMotion.matches ? "auto" : behavior,
       });
+
+      window.setTimeout(() => {
+        isAutoScrolling = false;
+      }, prefersReducedMotion.matches ? 0 : 650);
     }
-    
-    function startAutoScroll() {
-      if (isPaused) return;
-      
-      autoScrollInterval = setInterval(() => {
-        if (isPaused) return;
-        
-        currentIndex = (currentIndex + 1) % cards.length;
-        scrollToCard(currentIndex);
-      }, 3500); // Scroll every 3.5 seconds
-    }
-    
-    function pauseAutoScroll() {
-      isPaused = true;
+
+    function stopAutoScroll() {
       if (autoScrollInterval) {
         clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
       }
     }
-    
-    function resumeAutoScroll() {
+
+    function startAutoScroll() {
+      if (isPaused || !sectionVisible || autoScrollInterval) return;
+
+      autoScrollInterval = setInterval(() => {
+        if (isPaused || !sectionVisible) return;
+        currentIndex = (currentIndex + 1) % cards.length;
+        scrollToCard(currentIndex);
+      }, 3500);
+    }
+
+    function pauseAutoScroll() {
+      isPaused = true;
+      stopAutoScroll();
+    }
+
+    function resumeAutoScrollSoon(delay = 6000) {
+      clearTimeout(resumeTimeout);
+      resumeTimeout = setTimeout(() => {
+        currentIndex = getActiveIndex();
+        isPaused = false;
+        startAutoScroll();
+      }, delay);
+    }
+
+    track.addEventListener("mouseenter", pauseAutoScroll);
+    track.addEventListener("mouseleave", () => {
+      if (!sectionVisible) return;
       isPaused = false;
       startAutoScroll();
+    });
+
+    track.addEventListener(
+      "touchstart",
+      () => {
+        pauseAutoScroll();
+        clearTimeout(resumeTimeout);
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      "touchend",
+      () => {
+        currentIndex = getActiveIndex();
+        resumeAutoScrollSoon();
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      "touchcancel",
+      () => {
+        currentIndex = getActiveIndex();
+        resumeAutoScrollSoon();
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      "scroll",
+      () => {
+        if (isAutoScrolling) return;
+
+        pauseAutoScroll();
+        clearTimeout(resumeTimeout);
+        resumeTimeout = setTimeout(() => {
+          currentIndex = getActiveIndex();
+          syncDots();
+          isPaused = false;
+          startAutoScroll();
+        }, 6000);
+      },
+      { passive: true }
+    );
+
+    if (section) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            sectionVisible = entry.isIntersecting;
+            if (sectionVisible) {
+              currentIndex = getActiveIndex();
+              isPaused = false;
+              startAutoScroll();
+            } else {
+              pauseAutoScroll();
+            }
+          });
+        },
+        { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+      );
+      observer.observe(section);
+    } else {
+      sectionVisible = true;
+      startAutoScroll();
     }
-    
-    // Pause on hover/touch
-    track.addEventListener('mouseenter', pauseAutoScroll);
-    track.addEventListener('mouseleave', resumeAutoScroll);
-    track.addEventListener('touchstart', pauseAutoScroll, { passive: true });
-    
-    // Pause when user manually scrolls
-    let scrollTimeout;
-    track.addEventListener('scroll', () => {
-      pauseAutoScroll();
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        // Update currentIndex based on current scroll position
-        const cards = Array.from(track.querySelectorAll('.testimonial-card'));
-        let closestIndex = 0;
-        let closestDist = Infinity;
-        
-        cards.forEach((card, i) => {
-          const dist = Math.abs(card.offsetLeft - track.scrollLeft);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestIndex = i;
-          }
-        });
-        
-        currentIndex = closestIndex;
-        resumeAutoScroll();
-      }, 6000); // Resume after 6 seconds (longer for testimonials since they're text-heavy)
-    }, { passive: true });
-    
-    // Start auto-scrolling
-    startAutoScroll();
   }
 
   // -------------------------------------------------------------------------
@@ -1387,7 +1455,7 @@
       services: 0.1,
       dentists: 0.08,
       gallery: 0.11,
-      testimonials: 0.09,
+      testimonials: 0,
       financing: 0.07,
       location: 0.08,
     };
@@ -1516,15 +1584,14 @@
     });
   }
 
-  // TESTIMONIALS - Fade up with stagger
+  // TESTIMONIALS - Fade the block once (cards sit in a horizontal track)
   function setupTestimonialsAnimations() {
-    const testimonialCards = document.querySelectorAll('.testimonial-card');
-    testimonialCards.forEach((card, i) => {
-      card.setAttribute('data-animate', 'slide-up');
-      card.setAttribute('data-anim-label', `testimonial-${i + 1}`);
-      card.style.transitionDelay = `${i * 120}ms`;
-      animationObserver.observe(card);
-    });
+    const wrap = document.querySelector(".testimonials__wrap");
+    if (!wrap) return;
+
+    wrap.setAttribute("data-animate", "fade");
+    wrap.setAttribute("data-anim-label", "testimonials-wrap");
+    animationObserver.observe(wrap);
   }
 
   // FINANCING - Staggered scale fade per image
