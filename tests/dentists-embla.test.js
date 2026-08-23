@@ -39,7 +39,7 @@ function buildDentistsCarouselTrack(dentists) {
     };
   }
 
-  if (dentists.length < 6) {
+  if (dentists.length >= 3 && dentists.length <= 4) {
     return {
       trackDentists: Array.from({ length: 6 }, (_, index) => dentists[index % dentists.length]),
       carouselStartIndex: 0,

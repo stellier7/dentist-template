@@ -39,7 +39,7 @@ function buildLoopCarouselTrack(items) {
     };
   }
 
-  if (items.length < 6) {
+  if (items.length >= 3 && items.length <= 4) {
     return {
       trackItems: Array.from({ length: 6 }, (_, index) => items[index % items.length]),
       carouselStartIndex: 0,
@@ -201,6 +201,13 @@ async function run() {
       await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
       await page.locator('[data-section="gallery"]').scrollIntoViewIfNeeded();
       await page.waitForTimeout(1200);
+
+      const slideCount = await page.evaluate(
+        () => document.querySelectorAll("[data-gallery-track] .gallery__item").length
+      );
+      if (slideCount !== 5) {
+        throw new Error(`Expected 5 native gallery slides for demo config, got ${slideCount}`);
+      }
 
       const live = await getSlideSnapshot(page);
       if (!live?.loopActive) {

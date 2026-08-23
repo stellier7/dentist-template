@@ -402,8 +402,8 @@
    * Build carousel slide order for Embla loop + neighbor peeks.
    * - 1 item: static (no carousel)
    * - 2 items: sandwich six slides [B, A, B, A, B, A], start on A (first in config)
-   * - 3–5 items: repeat roster to 6 slides, start on A
-   * - 6+ items: one slide per item, Embla loop clones handle wrap
+   * - 3–4 items: repeat roster to 6 slides, start on A
+   * - 5+ items: one slide per item (5 slides loops reliably at gallery width)
    */
   function buildLoopCarouselTrack(items) {
     if (items.length <= 1) {
@@ -417,7 +417,7 @@
       };
     }
 
-    if (items.length < 6) {
+    if (items.length >= 3 && items.length <= 4) {
       return {
         trackItems: Array.from({ length: 6 }, (_, index) => items[index % items.length]),
         carouselStartIndex: 0,
