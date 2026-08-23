@@ -422,11 +422,22 @@
       viewport.removeAttribute("data-vertical-scroll-chain");
     }
 
-    // Embla loop needs enough slide content; duplicate short lists in the track only.
-    const trackDentists =
-      isCarousel && dentists.length < 4
-        ? Array.from({ length: 4 }, (_, index) => dentists[index % dentists.length])
-        : dentists;
+    // For two doctors, sandwich the primary card so both neighbors are real slides.
+    // For longer lists, duplicate short tracks so Embla loop has enough content.
+    let trackDentists = dentists;
+    let carouselStartIndex = 0;
+
+    if (isCarousel && dentists.length === 2) {
+      trackDentists = [dentists[1], dentists[0], dentists[1], dentists[0]];
+      carouselStartIndex = 1;
+    } else if (isCarousel && dentists.length < 4) {
+      trackDentists = Array.from(
+        { length: 4 },
+        (_, index) => dentists[index % dentists.length]
+      );
+    }
+
+    viewport.dataset.carouselStartIndex = String(carouselStartIndex);
 
     track.innerHTML = trackDentists
       .map((d) => {
@@ -553,21 +564,37 @@
     const section = document.querySelector('[data-section="dentists"]');
     if (!section) return;
 
+    const startIndex = Number(viewport.dataset.carouselStartIndex || "0");
+
     const { embla, autoplay, loopActive } = window.DentistsEmbla.initDentistsEmbla(viewport, {
       delay: 5000,
       reducedMotion: prefersReducedMotion.matches,
+      startIndex,
     });
 
     viewport.dataset.emblaLoop = loopActive ? "true" : "false";
 
     const refreshLoop = () => {
+      if (!embla.internalEngine().options.loop) return;
       embla.internalEngine().slideLooper.loop();
     };
 
-    embla.on("init", refreshLoop);
-    embla.on("reInit", refreshLoop);
+    const settleToStart = () => {
+      refreshLoop();
+      embla.scrollTo(startIndex, true);
+    };
+
+    embla.on("init", settleToStart);
+    embla.on("reInit", settleToStart);
     embla.on("scroll", refreshLoop);
-    requestAnimationFrame(refreshLoop);
+    embla.on("settle", refreshLoop);
+    requestAnimationFrame(settleToStart);
+
+    if (document.readyState === "complete") {
+      requestAnimationFrame(settleToStart);
+    } else {
+      window.addEventListener("load", () => requestAnimationFrame(settleToStart), { once: true });
+    }
 
     viewport._dentistsEmblaApi = embla;
 

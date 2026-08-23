@@ -8,6 +8,7 @@ import Autoplay from "embla-carousel-autoplay";
 export function initDentistsEmbla(viewport, options = {}) {
   const delay = options.delay ?? 5000;
   const reducedMotion = options.reducedMotion ?? false;
+  const startIndex = options.startIndex ?? 0;
 
   const plugins = reducedMotion
     ? []
@@ -28,6 +29,7 @@ export function initDentistsEmbla(viewport, options = {}) {
       align: "center",
       containScroll: false,
       skipSnaps: false,
+      startIndex,
       slides: ".dentist-card",
     },
     plugins

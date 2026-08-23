@@ -107,6 +107,20 @@ async function run() {
         );
       }
 
+      await page.evaluate(() => {
+        document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.scrollNext();
+      });
+      await page.waitForTimeout(700);
+      const elenaSnap = await getSlideSnapshot(page);
+      if (elenaSnap.centered !== "Dra. Elena Vasquez") {
+        throw new Error(`Expected Elena after first advance at ${viewport.width}px`);
+      }
+      if (!elenaSnap.leftPeek || !elenaSnap.rightPeek) {
+        throw new Error(
+          `Expected neighbors on both sides at Elena slide (${viewport.width}px, leftPeek=${elenaSnap.leftPeek}, rightPeek=${elenaSnap.rightPeek})`
+        );
+      }
+
       const viewportEl = page.locator("[data-dentists-viewport]");
       const names = [];
 
@@ -133,11 +147,15 @@ async function run() {
         if (!snap?.centered) throw new Error(`No centered slide after backward scroll #${i + 1}`);
       }
 
-      const beforeAutoplay = await getSlideSnapshot(page);
+      const beforeAutoplayIndex = await page.evaluate(
+        () => document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.selectedScrollSnap() ?? -1
+      );
       await page.waitForTimeout(5200);
-      const afterAutoplay = await getSlideSnapshot(page);
-      if (afterAutoplay.centered === beforeAutoplay.centered) {
-        throw new Error(`Autoplay did not change centered slide at ${viewport.width}px`);
+      const afterAutoplayIndex = await page.evaluate(
+        () => document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.selectedScrollSnap() ?? -1
+      );
+      if (beforeAutoplayIndex === afterAutoplayIndex) {
+        throw new Error(`Autoplay did not advance slide index at ${viewport.width}px`);
       }
 
       await page.close();

@@ -772,7 +772,7 @@ body.nav-open {
 }
 
 .dentists__carousel--active {
-  --dentist-slide-size: 78cqw;
+  --dentist-slide-size: 75cqw;
   --dentist-slide-spacing: 0.75rem;
 }
 
