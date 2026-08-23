@@ -147,6 +147,36 @@ async function run() {
         if (!snap?.centered) throw new Error(`No centered slide after backward scroll #${i + 1}`);
       }
 
+      const viewportBox = await viewportEl.boundingBox();
+      if (!viewportBox) throw new Error("Dentists viewport not visible for drag test");
+      const dragY = viewportBox.y + viewportBox.height / 2;
+      const dragStartX = viewportBox.x + viewportBox.width * 0.72;
+      const dragEndX = viewportBox.x + viewportBox.width * 0.28;
+      await page.mouse.move(dragStartX, dragY);
+      await page.mouse.down();
+      await page.mouse.move(dragEndX, dragY, { steps: 12 });
+      await page.mouse.up();
+      await page.waitForTimeout(400);
+
+      const beforeManualAutoplayIndex = await page.evaluate(
+        () => document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.selectedScrollSnap() ?? -1
+      );
+      const autoplayPlayingAfterManual = await page.evaluate(() => {
+        const embla = document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi;
+        return embla?.plugins?.().autoplay?.isPlaying?.() ?? false;
+      });
+      if (!autoplayPlayingAfterManual) {
+        throw new Error(`Autoplay stopped after manual drag at ${viewport.width}px`);
+      }
+
+      await page.waitForTimeout(5200);
+      const afterManualAutoplayIndex = await page.evaluate(
+        () => document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.selectedScrollSnap() ?? -1
+      );
+      if (beforeManualAutoplayIndex === afterManualAutoplayIndex) {
+        throw new Error(`Autoplay did not advance after manual drag at ${viewport.width}px`);
+      }
+
       const beforeAutoplayIndex = await page.evaluate(
         () => document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.selectedScrollSnap() ?? -1
       );

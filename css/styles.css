@@ -772,8 +772,15 @@ body.nav-open {
 }
 
 .dentists__carousel--active {
-  --dentist-slide-size: 75cqw;
-  --dentist-slide-spacing: 0.75rem;
+  --dentist-slide-size: 66cqw;
+  --dentist-slide-spacing: 0.625rem;
+}
+
+@media (min-width: 768px) {
+  .dentists__carousel--active {
+    --dentist-slide-size: 75cqw;
+    --dentist-slide-spacing: 0.75rem;
+  }
 }
 
 .dentists__viewport {

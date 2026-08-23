@@ -415,12 +415,7 @@
     const isCarousel = dentists.length > 1;
     carousel.classList.toggle("dentists__carousel--active", isCarousel);
     viewport.toggleAttribute("data-embla", isCarousel);
-
-    if (isCarousel) {
-      viewport.setAttribute("data-vertical-scroll-chain", "");
-    } else {
-      viewport.removeAttribute("data-vertical-scroll-chain");
-    }
+    viewport.removeAttribute("data-vertical-scroll-chain");
 
     // For two doctors, sandwich the primary card so both neighbors are real slides.
     // For longer lists, duplicate short tracks so Embla loop has enough content.
@@ -598,16 +593,19 @@
 
     viewport._dentistsEmblaApi = embla;
 
-    let hasStarted = false;
+    let sectionVisible = false;
+
+    const resumeAutoplay = () => {
+      if (!sectionVisible || !autoplay || prefersReducedMotion.matches) return;
+      autoplay.play();
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (!hasStarted) {
-              hasStarted = true;
-            }
-            autoplay?.play();
+          sectionVisible = entry.isIntersecting;
+          if (sectionVisible) {
+            resumeAutoplay();
           } else {
             autoplay?.stop();
           }
@@ -617,6 +615,11 @@
     );
 
     observer.observe(section);
+
+    embla.on("pointerUp", resumeAutoplay);
+    embla.on("reInit", resumeAutoplay);
+    viewport.addEventListener("touchend", resumeAutoplay, { passive: true });
+    viewport.addEventListener("touchcancel", resumeAutoplay, { passive: true });
 
     window.addEventListener(
       "resize",
@@ -1087,8 +1090,12 @@
   }
 
   function initTouchScrollPriority() {
-    const getChainContainer = (target) =>
-      target instanceof Element ? target.closest("[data-vertical-scroll-chain]") : null;
+    const getChainContainer = (target) => {
+      if (!(target instanceof Element)) return null;
+      const container = target.closest("[data-vertical-scroll-chain]");
+      if (!container || container.hasAttribute("data-embla")) return null;
+      return container;
+    };
 
     document.addEventListener(
       "touchstart",
