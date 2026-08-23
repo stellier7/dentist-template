@@ -846,6 +846,22 @@ body.nav-open {
   object-fit: cover;
 }
 
+@media (max-width: 767px) {
+  .dentist-card__photo {
+    aspect-ratio: 4 / 5;
+  }
+
+  .dentist-card__photo img {
+    object-fit: contain;
+    object-position: center top;
+  }
+
+  .gallery__item img {
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
 .dentist-card__placeholder {
   width: 100%;
   height: 100%;
