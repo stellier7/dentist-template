@@ -1847,6 +1847,7 @@ var DentistsEmbla = (() => {
   function initDentistsEmbla(viewport, options = {}) {
     const delay = options.delay ?? 5e3;
     const reducedMotion = options.reducedMotion ?? false;
+    const startIndex = options.startIndex ?? 0;
     const plugins = reducedMotion ? [] : [
       Autoplay({
         delay,
@@ -1863,6 +1864,7 @@ var DentistsEmbla = (() => {
         align: "center",
         containScroll: false,
         skipSnaps: false,
+        startIndex,
         slides: ".dentist-card"
       },
       plugins

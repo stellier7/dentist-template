@@ -397,6 +397,38 @@
   // -------------------------------------------------------------------------
   // Dentists
   // -------------------------------------------------------------------------
+  /**
+   * Build carousel slide order for Embla loop + neighbor peeks.
+   * - 1 doctor: static grid (no carousel)
+   * - 2 doctors: sandwich [B, A, B, A], start on A (first in config)
+   * - 3 doctors: repeat roster to 4 slides [A, B, C, A], start on A
+   * - 4+ doctors: one slide per doctor, Embla loop clones handle wrap
+   */
+  function buildDentistsCarouselTrack(dentists) {
+    if (dentists.length <= 1) {
+      return { trackDentists: dentists, carouselStartIndex: 0 };
+    }
+
+    if (dentists.length === 2) {
+      return {
+        trackDentists: [dentists[1], dentists[0], dentists[1], dentists[0]],
+        carouselStartIndex: 1,
+      };
+    }
+
+    if (dentists.length < 4) {
+      return {
+        trackDentists: Array.from(
+          { length: 4 },
+          (_, index) => dentists[index % dentists.length]
+        ),
+        carouselStartIndex: 0,
+      };
+    }
+
+    return { trackDentists: dentists, carouselStartIndex: 0 };
+  }
+
   function renderDentists() {
     const section = document.querySelector('[data-section="dentists"]');
     const carousel = document.querySelector("[data-dentists-carousel]");
@@ -415,18 +447,14 @@
     const isCarousel = dentists.length > 1;
     carousel.classList.toggle("dentists__carousel--active", isCarousel);
     viewport.toggleAttribute("data-embla", isCarousel);
+    viewport.removeAttribute("data-vertical-scroll-chain");
 
-    if (isCarousel) {
-      viewport.setAttribute("data-vertical-scroll-chain", "");
-    } else {
-      viewport.removeAttribute("data-vertical-scroll-chain");
-    }
+    // Build track order for Embla loop + neighbor peeks (see buildDentistsCarouselTrack).
+    const { trackDentists, carouselStartIndex } = isCarousel
+      ? buildDentistsCarouselTrack(dentists)
+      : { trackDentists: dentists, carouselStartIndex: 0 };
 
-    // Embla loop needs enough slide content; duplicate short lists in the track only.
-    const trackDentists =
-      isCarousel && dentists.length < 4
-        ? Array.from({ length: 4 }, (_, index) => dentists[index % dentists.length])
-        : dentists;
+    viewport.dataset.carouselStartIndex = String(carouselStartIndex);
 
     track.innerHTML = trackDentists
       .map((d) => {
@@ -553,34 +581,53 @@
     const section = document.querySelector('[data-section="dentists"]');
     if (!section) return;
 
+    const startIndex = Number(viewport.dataset.carouselStartIndex || "0");
+
     const { embla, autoplay, loopActive } = window.DentistsEmbla.initDentistsEmbla(viewport, {
       delay: 5000,
       reducedMotion: prefersReducedMotion.matches,
+      startIndex,
     });
 
     viewport.dataset.emblaLoop = loopActive ? "true" : "false";
 
     const refreshLoop = () => {
+      if (!embla.internalEngine().options.loop) return;
       embla.internalEngine().slideLooper.loop();
     };
 
-    embla.on("init", refreshLoop);
-    embla.on("reInit", refreshLoop);
+    const settleToStart = () => {
+      refreshLoop();
+      embla.scrollTo(startIndex, true);
+    };
+
+    embla.on("init", settleToStart);
+    embla.on("reInit", settleToStart);
     embla.on("scroll", refreshLoop);
-    requestAnimationFrame(refreshLoop);
+    embla.on("settle", refreshLoop);
+    requestAnimationFrame(settleToStart);
+
+    if (document.readyState === "complete") {
+      requestAnimationFrame(settleToStart);
+    } else {
+      window.addEventListener("load", () => requestAnimationFrame(settleToStart), { once: true });
+    }
 
     viewport._dentistsEmblaApi = embla;
 
-    let hasStarted = false;
+    let sectionVisible = false;
+
+    const resumeAutoplay = () => {
+      if (!sectionVisible || !autoplay || prefersReducedMotion.matches) return;
+      autoplay.play();
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (!hasStarted) {
-              hasStarted = true;
-            }
-            autoplay?.play();
+          sectionVisible = entry.isIntersecting;
+          if (sectionVisible) {
+            resumeAutoplay();
           } else {
             autoplay?.stop();
           }
@@ -590,6 +637,11 @@
     );
 
     observer.observe(section);
+
+    embla.on("pointerUp", resumeAutoplay);
+    embla.on("reInit", resumeAutoplay);
+    viewport.addEventListener("touchend", resumeAutoplay, { passive: true });
+    viewport.addEventListener("touchcancel", resumeAutoplay, { passive: true });
 
     window.addEventListener(
       "resize",
@@ -1060,8 +1112,12 @@
   }
 
   function initTouchScrollPriority() {
-    const getChainContainer = (target) =>
-      target instanceof Element ? target.closest("[data-vertical-scroll-chain]") : null;
+    const getChainContainer = (target) => {
+      if (!(target instanceof Element)) return null;
+      const container = target.closest("[data-vertical-scroll-chain]");
+      if (!container || container.hasAttribute("data-embla")) return null;
+      return container;
+    };
 
     document.addEventListener(
       "touchstart",
@@ -1441,10 +1497,12 @@
     });
   }
 
-  // DENTISTS - Entire card slides in
+  // DENTISTS - Entire card slides in (static grid only; carousel uses Embla transforms)
   function setupDentistsAnimations() {
     const dentistCards = document.querySelectorAll(".dentist-card:not([data-clone])");
     dentistCards.forEach((card, i) => {
+      if (card.closest(".dentists__carousel--active")) return;
+
       const direction = i % 2 === 0 ? "slide-left" : "slide-right";
       card.setAttribute("data-animate", direction);
       card.setAttribute("data-anim-label", `dentist-card-${i + 1}`);
