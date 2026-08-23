@@ -1,4 +1,4 @@
-var DentistsEmbla = (() => {
+var CarouselsEmbla = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -17,10 +17,10 @@ var DentistsEmbla = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // js/dentists-embla.mjs
-  var dentists_embla_exports = {};
-  __export(dentists_embla_exports, {
-    initDentistsEmbla: () => initDentistsEmbla
+  // js/carousels-embla.mjs
+  var carousels_embla_exports = {};
+  __export(carousels_embla_exports, {
+    initLoopCarousel: () => initLoopCarousel
   });
 
   // node_modules/embla-carousel/esm/embla-carousel.esm.js
@@ -1843,11 +1843,13 @@ var DentistsEmbla = (() => {
   }
   Autoplay.globalOptions = void 0;
 
-  // js/dentists-embla.mjs
-  function initDentistsEmbla(viewport, options = {}) {
+  // js/carousels-embla.mjs
+  function initLoopCarousel(viewport, options = {}) {
+    const slideSelector = options.slideSelector ?? ".embla__slide";
     const delay = options.delay ?? 5e3;
     const reducedMotion = options.reducedMotion ?? false;
     const startIndex = options.startIndex ?? 0;
+    const label = options.label ?? "Carousel";
     const plugins = reducedMotion ? [] : [
       Autoplay({
         delay,
@@ -1865,17 +1867,17 @@ var DentistsEmbla = (() => {
         containScroll: false,
         skipSnaps: false,
         startIndex,
-        slides: ".dentist-card"
+        slides: slideSelector
       },
       plugins
     );
     if (!embla.internalEngine().options.loop) {
       console.warn(
-        "Dentists carousel: Embla loop was disabled because slides are too wide. Neighbors and seamless wrap require narrower slides."
+        `${label}: Embla loop was disabled because slides are too wide. Neighbors and seamless wrap require narrower slides.`
       );
     }
     const autoplay = plugins[0] ?? null;
     return { embla, autoplay, loopActive: embla.internalEngine().options.loop };
   }
-  return __toCommonJS(dentists_embla_exports);
+  return __toCommonJS(carousels_embla_exports);
 })();
