@@ -161,8 +161,10 @@
           </header>
         </div>
         <div class="gallery__wrap">
-          <div class="gallery__scroller" data-gallery-scroller data-vertical-scroll-chain tabindex="0">
-            <!-- images injected -->
+          <div class="gallery__carousel" data-gallery-carousel>
+            <div class="gallery__viewport" data-gallery-viewport tabindex="0">
+              <div class="gallery__track" data-gallery-track></div>
+            </div>
           </div>
           <div class="gallery__nav" data-gallery-nav>
             <button class="gallery__arrow gallery__arrow--prev" data-gallery-prev aria-label="Previous image">
@@ -243,7 +245,7 @@
 
     <!-- Config must load before app -->
     <script src="js/config.js"></script>
-    <script src="js/dentists-embla.bundle.js"></script>
+    <script src="js/carousels-embla.bundle.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

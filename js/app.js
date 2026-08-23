@@ -36,6 +36,7 @@
   initHeaderScroll();
   initTestimonialsCarousel();
   initDentistsCarousel();
+  initGalleryCarousel();
   initVerticalScrollChaining();
   
   // Initialize animations after content renders
@@ -399,34 +400,134 @@
   // -------------------------------------------------------------------------
   /**
    * Build carousel slide order for Embla loop + neighbor peeks.
-   * - 1 doctor: static grid (no carousel)
-   * - 2 doctors: sandwich [B, A, B, A], start on A (first in config)
-   * - 3 doctors: repeat roster to 4 slides [A, B, C, A], start on A
-   * - 4+ doctors: one slide per doctor, Embla loop clones handle wrap
+   * - 1 item: static (no carousel)
+   * - 2 items: sandwich six slides [B, A, B, A, B, A], start on A (first in config)
+   * - 3–5 items: repeat roster to 6 slides, start on A
+   * - 6+ items: one slide per item, Embla loop clones handle wrap
    */
-  function buildDentistsCarouselTrack(dentists) {
-    if (dentists.length <= 1) {
-      return { trackDentists: dentists, carouselStartIndex: 0 };
+  function buildLoopCarouselTrack(items) {
+    if (items.length <= 1) {
+      return { trackItems: items, carouselStartIndex: 0 };
     }
 
-    if (dentists.length === 2) {
+    if (items.length === 2) {
       return {
-        trackDentists: [dentists[1], dentists[0], dentists[1], dentists[0]],
+        trackItems: Array.from({ length: 6 }, (_, index) => items[(index + 1) % 2]),
         carouselStartIndex: 1,
       };
     }
 
-    if (dentists.length < 4) {
+    if (items.length < 6) {
       return {
-        trackDentists: Array.from(
-          { length: 4 },
-          (_, index) => dentists[index % dentists.length]
-        ),
+        trackItems: Array.from({ length: 6 }, (_, index) => items[index % items.length]),
         carouselStartIndex: 0,
       };
     }
 
-    return { trackDentists: dentists, carouselStartIndex: 0 };
+    return { trackItems: items, carouselStartIndex: 0 };
+  }
+
+  function buildDentistsCarouselTrack(dentists) {
+    const { trackItems, carouselStartIndex } = buildLoopCarouselTrack(dentists);
+    return { trackDentists: trackItems, carouselStartIndex };
+  }
+
+  function buildGalleryCarouselTrack(images) {
+    const { trackItems, carouselStartIndex } = buildLoopCarouselTrack(images);
+    return { trackImages: trackItems, carouselStartIndex };
+  }
+
+  function initLoopEmblaSection({
+    viewport,
+    section,
+    startIndex,
+    delay,
+    slideSelector,
+    label,
+    apiKey,
+    nav,
+  }) {
+    if (!window.CarouselsEmbla?.initLoopCarousel) {
+      console.error("CarouselsEmbla bundle missing — run npm run build:carousels-embla");
+      return null;
+    }
+
+    const { embla, autoplay, loopActive } = window.CarouselsEmbla.initLoopCarousel(viewport, {
+      delay,
+      reducedMotion: prefersReducedMotion.matches,
+      startIndex,
+      slideSelector,
+      label,
+    });
+
+    viewport.dataset.emblaLoop = loopActive ? "true" : "false";
+
+    const refreshLoop = () => {
+      if (!embla.internalEngine().options.loop) return;
+      embla.internalEngine().slideLooper.loop();
+    };
+
+    const settleToStart = () => {
+      refreshLoop();
+      embla.scrollTo(startIndex, true);
+    };
+
+    embla.on("init", settleToStart);
+    embla.on("reInit", settleToStart);
+    embla.on("scroll", refreshLoop);
+    embla.on("settle", refreshLoop);
+    requestAnimationFrame(settleToStart);
+
+    if (document.readyState === "complete") {
+      requestAnimationFrame(settleToStart);
+    } else {
+      window.addEventListener("load", () => requestAnimationFrame(settleToStart), { once: true });
+    }
+
+    viewport[apiKey] = embla;
+
+    let sectionVisible = false;
+
+    const resumeAutoplay = () => {
+      if (!sectionVisible || !autoplay || prefersReducedMotion.matches) return;
+      autoplay.play();
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          sectionVisible = entry.isIntersecting;
+          if (sectionVisible) {
+            resumeAutoplay();
+          } else {
+            autoplay?.stop();
+          }
+        });
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    observer.observe(section);
+
+    embla.on("pointerUp", resumeAutoplay);
+    embla.on("reInit", resumeAutoplay);
+    viewport.addEventListener("touchend", resumeAutoplay, { passive: true });
+    viewport.addEventListener("touchcancel", resumeAutoplay, { passive: true });
+
+    if (nav?.prevBtn && nav?.nextBtn) {
+      nav.prevBtn.addEventListener("click", () => {
+        embla.scrollPrev();
+        resumeAutoplay();
+      });
+      nav.nextBtn.addEventListener("click", () => {
+        embla.scrollNext();
+        resumeAutoplay();
+      });
+    }
+
+    window.addEventListener("resize", () => embla.reInit(), { passive: true });
+
+    return embla;
   }
 
   function renderDentists() {
@@ -484,170 +585,26 @@
   }
 
   // -------------------------------------------------------------------------
-  // Carousel helpers
-  // -------------------------------------------------------------------------
-  function getRealCarouselItems(container, selector) {
-    return Array.from(container.querySelectorAll(selector)).filter(
-      (el) => !el.hasAttribute("data-clone")
-    );
-  }
-
-  function appendInfiniteClone(container, firstItem) {
-    container.querySelectorAll('[data-clone="end"]').forEach((el) => el.remove());
-    if (!firstItem) return null;
-
-    const clone = firstItem.cloneNode(true);
-    clone.setAttribute("data-clone", "end");
-    clone.setAttribute("aria-hidden", "true");
-    clone.querySelectorAll("img").forEach((img) => {
-      img.alt = "";
-    });
-    container.appendChild(clone);
-    return clone;
-  }
-
-  function scrollCarouselItemToCenter(container, item, behavior = "smooth") {
-    if (!container || !item) return;
-
-    const left = item.offsetLeft - (container.clientWidth - item.offsetWidth) / 2;
-    container.scrollTo({
-      left: Math.max(0, left),
-      behavior: prefersReducedMotion.matches ? "auto" : behavior,
-    });
-  }
-
-  function getClosestCarouselIndex(container, items) {
-    const center = container.scrollLeft + container.clientWidth / 2;
-    let closestIndex = 0;
-    let closestDistance = Infinity;
-
-    items.forEach((item, index) => {
-      const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-      const distance = Math.abs(center - itemCenter);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    return closestIndex;
-  }
-
-  function resetInfiniteCloneJump(container, realItems) {
-    const realCount = realItems.length;
-    if (!realCount) return false;
-
-    const center = container.scrollLeft + container.clientWidth / 2;
-
-    const endClone = container.querySelector('[data-clone="end"]');
-    if (endClone && realItems[0]) {
-      const cloneCenter = endClone.offsetLeft + endClone.offsetWidth / 2;
-      if (Math.abs(center - cloneCenter) <= 28) {
-        container.style.scrollBehavior = "auto";
-        scrollCarouselItemToCenter(container, realItems[0], "auto");
-        container.style.scrollBehavior = "";
-        return 0;
-      }
-    }
-
-    const startClone = container.querySelector('[data-clone="start"]');
-    if (startClone && realCount > 1 && realItems[realCount - 1]) {
-      const cloneCenter = startClone.offsetLeft + startClone.offsetWidth / 2;
-      if (Math.abs(center - cloneCenter) <= 28) {
-        container.style.scrollBehavior = "auto";
-        scrollCarouselItemToCenter(container, realItems[realCount - 1], "auto");
-        container.style.scrollBehavior = "";
-        return realCount - 1;
-      }
-    }
-
-    return false;
-  }
-
-  // Gallery-only clone helper (dentists carousel uses Embla loop)
-
-  // -------------------------------------------------------------------------
   // Dentists Carousel (Embla — loop + autoplay)
   // -------------------------------------------------------------------------
   function initDentistsCarousel() {
     const viewport = document.querySelector("[data-dentists-viewport]");
     if (!viewport || !viewport.hasAttribute("data-embla")) return;
 
-    if (!window.DentistsEmbla?.initDentistsEmbla) {
-      console.error("DentistsEmbla bundle missing — run npm run build:dentists-embla");
-      return;
-    }
-
     const section = document.querySelector('[data-section="dentists"]');
     if (!section) return;
 
     const startIndex = Number(viewport.dataset.carouselStartIndex || "0");
 
-    const { embla, autoplay, loopActive } = window.DentistsEmbla.initDentistsEmbla(viewport, {
-      delay: 5000,
-      reducedMotion: prefersReducedMotion.matches,
+    initLoopEmblaSection({
+      viewport,
+      section,
       startIndex,
+      delay: 5000,
+      slideSelector: ".dentist-card",
+      label: "Dentists carousel",
+      apiKey: "_dentistsEmblaApi",
     });
-
-    viewport.dataset.emblaLoop = loopActive ? "true" : "false";
-
-    const refreshLoop = () => {
-      if (!embla.internalEngine().options.loop) return;
-      embla.internalEngine().slideLooper.loop();
-    };
-
-    const settleToStart = () => {
-      refreshLoop();
-      embla.scrollTo(startIndex, true);
-    };
-
-    embla.on("init", settleToStart);
-    embla.on("reInit", settleToStart);
-    embla.on("scroll", refreshLoop);
-    embla.on("settle", refreshLoop);
-    requestAnimationFrame(settleToStart);
-
-    if (document.readyState === "complete") {
-      requestAnimationFrame(settleToStart);
-    } else {
-      window.addEventListener("load", () => requestAnimationFrame(settleToStart), { once: true });
-    }
-
-    viewport._dentistsEmblaApi = embla;
-
-    let sectionVisible = false;
-
-    const resumeAutoplay = () => {
-      if (!sectionVisible || !autoplay || prefersReducedMotion.matches) return;
-      autoplay.play();
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          sectionVisible = entry.isIntersecting;
-          if (sectionVisible) {
-            resumeAutoplay();
-          } else {
-            autoplay?.stop();
-          }
-        });
-      },
-      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
-    );
-
-    observer.observe(section);
-
-    embla.on("pointerUp", resumeAutoplay);
-    embla.on("reInit", resumeAutoplay);
-    viewport.addEventListener("touchend", resumeAutoplay, { passive: true });
-    viewport.addEventListener("touchcancel", resumeAutoplay, { passive: true });
-
-    window.addEventListener(
-      "resize",
-      () => embla.reInit(),
-      { passive: true }
-    );
   }
 
   // -------------------------------------------------------------------------
@@ -655,8 +612,11 @@
   // -------------------------------------------------------------------------
   function renderGallery() {
     const section = document.querySelector('[data-section="gallery"]');
-    const scroller = document.querySelector("[data-gallery-scroller]");
-    if (!section || !scroller) return;
+    const carousel = document.querySelector("[data-gallery-carousel]");
+    const viewport = document.querySelector("[data-gallery-viewport]");
+    const track = document.querySelector("[data-gallery-track]");
+    const nav = document.querySelector("[data-gallery-nav]");
+    if (!section || !carousel || !viewport || !track) return;
 
     const images = Array.isArray(cfg.gallery) ? cfg.gallery.filter(Boolean) : [];
     if (!images.length) {
@@ -665,7 +625,20 @@
     }
 
     section.hidden = false;
-    scroller.innerHTML = images
+
+    const isCarousel = images.length > 1;
+    carousel.classList.toggle("gallery__carousel--active", isCarousel);
+    viewport.toggleAttribute("data-embla", isCarousel);
+    viewport.removeAttribute("data-vertical-scroll-chain");
+    if (nav) nav.hidden = !isCarousel;
+
+    const { trackImages, carouselStartIndex } = isCarousel
+      ? buildGalleryCarouselTrack(images)
+      : { trackImages: images, carouselStartIndex: 0 };
+
+    viewport.dataset.carouselStartIndex = String(carouselStartIndex);
+
+    track.innerHTML = trackImages
       .map(
         (src, i) => `
       <figure class="gallery__item">
@@ -675,6 +648,29 @@
       </figure>`
       )
       .join("");
+  }
+
+  function initGalleryCarousel() {
+    const viewport = document.querySelector("[data-gallery-viewport]");
+    if (!viewport || !viewport.hasAttribute("data-embla")) return;
+
+    const section = document.querySelector('[data-section="gallery"]');
+    if (!section) return;
+
+    const startIndex = Number(viewport.dataset.carouselStartIndex || "0");
+    const prevBtn = document.querySelector("[data-gallery-prev]");
+    const nextBtn = document.querySelector("[data-gallery-next]");
+
+    initLoopEmblaSection({
+      viewport,
+      section,
+      startIndex,
+      delay: 3000,
+      slideSelector: ".gallery__item",
+      label: "Gallery carousel",
+      apiKey: "_galleryEmblaApi",
+      nav: prevBtn && nextBtn ? { prevBtn, nextBtn } : null,
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -1295,9 +1291,6 @@
     // 4. Scroll-triggered animations for all sections
     initScrollAnimations();
     
-    // 5. Gallery navigation
-    initGalleryNav();
-    
     // 6. Show debug overlay if enabled
     if (DEBUG_MODE) {
       createDebugOverlay();
@@ -1510,12 +1503,14 @@
     });
   }
 
-  // GALLERY - Scale + fade with stagger
+  // GALLERY - Scale + fade with stagger (static layouts only; carousel uses Embla transforms)
   function setupGalleryAnimations() {
     const galleryItems = document.querySelectorAll(".gallery__item:not([data-clone])");
     galleryItems.forEach((item, i) => {
-      item.setAttribute('data-animate', 'fade-scale');
-      item.setAttribute('data-anim-label', `gallery-item-${i + 1}`);
+      if (item.closest(".gallery__carousel--active")) return;
+
+      item.setAttribute("data-animate", "fade-scale");
+      item.setAttribute("data-anim-label", `gallery-item-${i + 1}`);
       item.style.transitionDelay = `${Math.min(i * 60, 400)}ms`;
       animationObserver.observe(item);
     });
@@ -1637,164 +1632,6 @@
         return `<div class="${className}">→ ${entry.message}</div>`;
       })
       .join('');
-  }
-
-  // -------------------------------------------------------------------------
-  // GALLERY NAVIGATION + INFINITE AUTO-SCROLL
-  // -------------------------------------------------------------------------
-  function initGalleryNav() {
-    const scroller = document.querySelector("[data-gallery-scroller]");
-    const prevBtn = document.querySelector("[data-gallery-prev]");
-    const nextBtn = document.querySelector("[data-gallery-next]");
-
-    if (!scroller || !prevBtn || !nextBtn) return;
-
-    const realItems = getRealCarouselItems(scroller, ".gallery__item");
-    if (realItems.length === 0) return;
-
-    appendInfiniteClone(scroller, realItems[0]);
-    const realCount = realItems.length;
-
-    let autoScrollInterval = null;
-    let isPaused = false;
-    let currentIndex = 0;
-    let hasStarted = false;
-    let isAutoScrolling = false;
-
-    function scrollToIndex(index, behavior = "smooth") {
-      const allItems = scroller.querySelectorAll(".gallery__item");
-      const item = allItems[index];
-      if (!item) return;
-
-      isAutoScrolling = true;
-      scrollCarouselItemToCenter(scroller, item, behavior);
-
-      const release = () => {
-        isAutoScrolling = false;
-      };
-
-      if (index === realCount) {
-        setTimeout(() => {
-          scrollCarouselItemToCenter(scroller, allItems[0], "auto");
-          currentIndex = 0;
-          release();
-        }, prefersReducedMotion.matches ? 0 : 650);
-      } else {
-        currentIndex = index;
-        setTimeout(release, prefersReducedMotion.matches ? 0 : 650);
-      }
-    }
-
-    function goToNext() {
-      scrollToIndex(currentIndex + 1);
-    }
-
-    function goToPrev() {
-      if (currentIndex === 0) {
-        scrollToIndex(realCount - 1);
-      } else {
-        scrollToIndex(currentIndex - 1);
-      }
-    }
-
-    function startAutoScroll() {
-      if (prefersReducedMotion.matches || isPaused || autoScrollInterval) return;
-
-      autoScrollInterval = setInterval(() => {
-        if (isPaused) return;
-        goToNext();
-      }, 3000);
-    }
-
-    function pauseAutoScroll() {
-      isPaused = true;
-      if (autoScrollInterval) {
-        clearInterval(autoScrollInterval);
-        autoScrollInterval = null;
-      }
-    }
-
-    function resumeAutoScroll() {
-      isPaused = false;
-      startAutoScroll();
-    }
-
-    function pauseAndResumeLater(delay = 7000) {
-      pauseAutoScroll();
-      clearTimeout(scroller._galleryResumeTimeout);
-      scroller._galleryResumeTimeout = setTimeout(resumeAutoScroll, delay);
-    }
-
-    prevBtn.disabled = false;
-    nextBtn.disabled = false;
-    prevBtn.addEventListener("click", () => {
-      pauseAndResumeLater();
-      goToPrev();
-    });
-    nextBtn.addEventListener("click", () => {
-      pauseAndResumeLater();
-      goToNext();
-    });
-
-    scroller.addEventListener("mouseenter", pauseAutoScroll);
-    scroller.addEventListener("mouseleave", resumeAutoScroll);
-    scroller.addEventListener("touchstart", pauseAutoScroll, { passive: true });
-    scroller.addEventListener("touchend", resumeAutoScroll, { passive: true });
-    scroller.addEventListener("touchcancel", resumeAutoScroll, { passive: true });
-
-    let scrollTimeout;
-    scroller.addEventListener(
-      "scroll",
-      () => {
-        if (isAutoScrolling) return;
-
-        const jumpedIndex = resetInfiniteCloneJump(scroller, realItems);
-        if (jumpedIndex !== false) {
-          currentIndex = jumpedIndex;
-          return;
-        }
-
-        pauseAutoScroll();
-        clearTimeout(scrollTimeout);
-
-        scrollTimeout = setTimeout(() => {
-          currentIndex = getClosestCarouselIndex(scroller, realItems);
-          resumeAutoScroll();
-        }, 5000);
-      },
-      { passive: true }
-    );
-
-    const section = document.querySelector('[data-section="gallery"]');
-    const beginCarousel = () => {
-      currentIndex = 0;
-      scrollCarouselItemToCenter(scroller, realItems[0], "auto");
-      setTimeout(() => {
-        isPaused = false;
-        startAutoScroll();
-      }, 800);
-    };
-
-    if (section) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting && !hasStarted) {
-              hasStarted = true;
-              beginCarousel();
-              observer.unobserve(section);
-            }
-          });
-        },
-        {
-          threshold: 0.2,
-          rootMargin: "0px 0px -10% 0px",
-        }
-      );
-      observer.observe(section);
-    } else {
-      beginCarousel();
-    }
   }
 
   // -------------------------------------------------------------------------

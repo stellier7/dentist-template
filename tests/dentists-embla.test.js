@@ -34,14 +34,14 @@ function buildDentistsCarouselTrack(dentists) {
 
   if (dentists.length === 2) {
     return {
-      trackDentists: [dentists[1], dentists[0], dentists[1], dentists[0]],
+      trackDentists: Array.from({ length: 6 }, (_, index) => dentists[(index + 1) % 2]),
       carouselStartIndex: 1,
     };
   }
 
-  if (dentists.length < 4) {
+  if (dentists.length < 6) {
     return {
-      trackDentists: Array.from({ length: 4 }, (_, index) => dentists[index % dentists.length]),
+      trackDentists: Array.from({ length: 6 }, (_, index) => dentists[index % dentists.length]),
       carouselStartIndex: 0,
     };
   }
@@ -68,9 +68,11 @@ async function mountDentistsCarousel(page, dentists) {
       viewport.dataset.carouselStartIndex = String(carouselStartIndex);
       viewport._dentistsEmblaApi?.destroy?.();
 
-      const { embla, loopActive } = window.DentistsEmbla.initDentistsEmbla(viewport, {
+      const { embla, loopActive } = window.CarouselsEmbla.initLoopCarousel(viewport, {
         delay: 5000,
         startIndex: carouselStartIndex,
+        slideSelector: ".dentist-card",
+        label: "Dentists carousel",
       });
 
       viewport._dentistsEmblaApi = embla;
