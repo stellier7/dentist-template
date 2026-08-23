@@ -1475,10 +1475,12 @@
     });
   }
 
-  // DENTISTS - Entire card slides in
+  // DENTISTS - Entire card slides in (static grid only; carousel uses Embla transforms)
   function setupDentistsAnimations() {
     const dentistCards = document.querySelectorAll(".dentist-card:not([data-clone])");
     dentistCards.forEach((card, i) => {
+      if (card.closest(".dentists__carousel--active")) return;
+
       const direction = i % 2 === 0 ? "slide-left" : "slide-right";
       card.setAttribute("data-animate", direction);
       card.setAttribute("data-anim-label", `dentist-card-${i + 1}`);

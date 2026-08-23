@@ -121,6 +121,34 @@ async function run() {
         );
       }
 
+      await page.evaluate(() => {
+        document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.scrollNext();
+      });
+      await page.waitForTimeout(700);
+      const loopCarlosSnap = await getSlideSnapshot(page);
+      if (loopCarlosSnap.centered !== "Dr. Carlos Mendoza") {
+        throw new Error(`Expected Carlos on loop boundary slide at ${viewport.width}px`);
+      }
+      if (!loopCarlosSnap.leftPeek || !loopCarlosSnap.rightPeek) {
+        throw new Error(
+          `Expected neighbors on both sides at loop Carlos slide (${viewport.width}px, leftPeek=${loopCarlosSnap.leftPeek}, rightPeek=${loopCarlosSnap.rightPeek})`
+        );
+      }
+
+      await page.evaluate(() => {
+        document.querySelector("[data-dentists-viewport]")?._dentistsEmblaApi?.scrollNext();
+      });
+      await page.waitForTimeout(700);
+      const loopElenaSnap = await getSlideSnapshot(page);
+      if (loopElenaSnap.centered !== "Dra. Elena Vasquez") {
+        throw new Error(`Expected Elena after loop wrap at ${viewport.width}px`);
+      }
+      if (!loopElenaSnap.leftPeek || !loopElenaSnap.rightPeek) {
+        throw new Error(
+          `Expected neighbors on both sides after loop wrap (${viewport.width}px, leftPeek=${loopElenaSnap.leftPeek}, rightPeek=${loopElenaSnap.rightPeek})`
+        );
+      }
+
       const viewportEl = page.locator("[data-dentists-viewport]");
       const names = [];
 

@@ -806,7 +806,18 @@ body.nav-open {
 .dentists__carousel--active .dentist-card {
   flex: 0 0 var(--dentist-slide-size);
   min-width: 0;
-  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  transition: box-shadow 220ms ease;
+}
+
+.dentists__carousel--active .dentist-card[data-animate],
+.dentists__carousel--active .dentist-card[data-animate].in-view {
+  opacity: 1;
+  transition: box-shadow 220ms ease;
+}
+
+.dentists__carousel--active .dentist-card:hover {
+  transform: none;
 }
 
 .dentist-card {
