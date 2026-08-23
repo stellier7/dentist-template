@@ -175,6 +175,49 @@ async function assertGalleryLoop(page, images, viewportWidth) {
   }
 }
 
+async function assertGalleryLightbox(page) {
+  const lightbox = page.locator("[data-gallery-lightbox]");
+  await expectHidden(lightbox);
+
+  const thirdItem = page.locator("[data-gallery-track] .gallery__item").nth(2);
+  await thirdItem.click();
+
+  await expectVisible(lightbox);
+  const imageSrc = await lightbox.locator("[data-gallery-lightbox-image]").getAttribute("src");
+  if (!imageSrc?.includes("smile-03.jpg")) {
+    throw new Error(`Expected lightbox to open on smile-03.jpg, got ${imageSrc}`);
+  }
+
+  await lightbox.locator("[data-gallery-lightbox-next]").click();
+  const nextSrc = await lightbox.locator("[data-gallery-lightbox-image]").getAttribute("src");
+  if (!nextSrc?.includes("smile-04.jpg")) {
+    throw new Error(`Expected lightbox next image smile-04.jpg, got ${nextSrc}`);
+  }
+
+  await page.keyboard.press("ArrowLeft");
+  const prevSrc = await lightbox.locator("[data-gallery-lightbox-image]").getAttribute("src");
+  if (!prevSrc?.includes("smile-03.jpg")) {
+    throw new Error(`Expected lightbox previous image smile-03.jpg, got ${prevSrc}`);
+  }
+
+  await page.keyboard.press("Escape");
+  await expectHidden(lightbox);
+}
+
+async function expectHidden(locator) {
+  const hidden = await locator.evaluate((node) => node.hidden);
+  if (!hidden) {
+    throw new Error("Expected element to be hidden");
+  }
+}
+
+async function expectVisible(locator) {
+  const hidden = await locator.evaluate((node) => node.hidden);
+  if (hidden) {
+    throw new Error("Expected element to be visible");
+  }
+}
+
 async function run() {
   const server = spawn("python3", ["-m", "http.server", String(PORT)], {
     cwd: process.cwd(),
@@ -217,6 +260,10 @@ async function run() {
         throw new Error(`Live gallery missing neighbors at ${viewport.width}px`);
       }
 
+      if (viewport.width === 1280) {
+        await assertGalleryLightbox(page);
+      }
+
       await assertGalleryLoop(page, demoImages, viewport.width);
 
       for (const images of [demoImages.slice(0, 2), demoImages.slice(0, 3)]) {
@@ -243,6 +290,7 @@ async function run() {
 
     await browser.close();
     console.log("PASS: gallery Embla carousel shows neighbors and loops forward.");
+    console.log("PASS: gallery lightbox opens, navigates, and closes.");
   } finally {
     server.kill("SIGTERM");
   }
