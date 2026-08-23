@@ -397,6 +397,38 @@
   // -------------------------------------------------------------------------
   // Dentists
   // -------------------------------------------------------------------------
+  /**
+   * Build carousel slide order for Embla loop + neighbor peeks.
+   * - 1 doctor: static grid (no carousel)
+   * - 2 doctors: sandwich [B, A, B, A], start on A (first in config)
+   * - 3 doctors: repeat roster to 4 slides [A, B, C, A], start on A
+   * - 4+ doctors: one slide per doctor, Embla loop clones handle wrap
+   */
+  function buildDentistsCarouselTrack(dentists) {
+    if (dentists.length <= 1) {
+      return { trackDentists: dentists, carouselStartIndex: 0 };
+    }
+
+    if (dentists.length === 2) {
+      return {
+        trackDentists: [dentists[1], dentists[0], dentists[1], dentists[0]],
+        carouselStartIndex: 1,
+      };
+    }
+
+    if (dentists.length < 4) {
+      return {
+        trackDentists: Array.from(
+          { length: 4 },
+          (_, index) => dentists[index % dentists.length]
+        ),
+        carouselStartIndex: 0,
+      };
+    }
+
+    return { trackDentists: dentists, carouselStartIndex: 0 };
+  }
+
   function renderDentists() {
     const section = document.querySelector('[data-section="dentists"]');
     const carousel = document.querySelector("[data-dentists-carousel]");
@@ -417,20 +449,10 @@
     viewport.toggleAttribute("data-embla", isCarousel);
     viewport.removeAttribute("data-vertical-scroll-chain");
 
-    // For two doctors, sandwich the primary card so both neighbors are real slides.
-    // For longer lists, duplicate short tracks so Embla loop has enough content.
-    let trackDentists = dentists;
-    let carouselStartIndex = 0;
-
-    if (isCarousel && dentists.length === 2) {
-      trackDentists = [dentists[1], dentists[0], dentists[1], dentists[0]];
-      carouselStartIndex = 1;
-    } else if (isCarousel && dentists.length < 4) {
-      trackDentists = Array.from(
-        { length: 4 },
-        (_, index) => dentists[index % dentists.length]
-      );
-    }
+    // Build track order for Embla loop + neighbor peeks (see buildDentistsCarouselTrack).
+    const { trackDentists, carouselStartIndex } = isCarousel
+      ? buildDentistsCarouselTrack(dentists)
+      : { trackDentists: dentists, carouselStartIndex: 0 };
 
     viewport.dataset.carouselStartIndex = String(carouselStartIndex);
 
