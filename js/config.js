@@ -30,10 +30,12 @@ const config = {
       es: "Cuidado gentil para sonrisas más sanas y radiantes.",
     },
 
-    // REQUIRED — used for click-to-call (tel:) links. Digits only recommended for telHref.
-    phone: "(305) 555-0148",
-    // REQUIRED — raw digits for tel: links (no spaces or punctuation)
-    phoneTel: "3055550148",
+    // REQUIRED — display phone number (any readable format)
+    phone: "+504 9999-8888",
+    // REQUIRED — local or international digits for tel:/WhatsApp (no spaces or punctuation)
+    phoneTel: "99998888",
+    // REQUIRED — country calling code without "+" (Honduras = 504, US = 1)
+    phoneCountryCode: "504",
 
     // REQUIRED — display address and map/directions helpers
     address: {
