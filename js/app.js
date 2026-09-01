@@ -200,12 +200,27 @@
     if (group) group.setAttribute("aria-label", t("langToggle.label"));
   }
 
+  function getInternationalPhoneDigits() {
+    const countryCode = String(cfg.practice.phoneCountryCode || "504").replace(/\D/g, "");
+    let digits = (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "");
+    if (!digits) return "";
+
+    if (countryCode && digits.startsWith(countryCode)) {
+      return digits;
+    }
+
+    if (digits.startsWith("0")) {
+      digits = digits.replace(/^0+/, "");
+    }
+
+    return countryCode ? `${countryCode}${digits}` : digits;
+  }
+
   function whatsappHref(message = "") {
-    const digits = (cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, "");
+    const digits = getInternationalPhoneDigits();
     if (!digits) return "#";
-    
-    // WhatsApp link format: https://wa.me/1234567890?text=Message
-    const baseUrl = `https://wa.me/1${digits}`;
+
+    const baseUrl = `https://wa.me/${digits}`;
     if (message) {
       const encodedMessage = encodeURIComponent(message);
       return `${baseUrl}?text=${encodedMessage}`;
@@ -238,7 +253,7 @@
     const bar = document.querySelector("[data-sticky-bar]");
     if (!bar) return;
     // Always useful when phone exists; hide only if no phone configured
-    const hasPhone = Boolean((cfg.practice.phoneTel || cfg.practice.phone || "").replace(/\D/g, ""));
+    const hasPhone = Boolean(getInternationalPhoneDigits());
     bar.hidden = !hasPhone;
   }
 
