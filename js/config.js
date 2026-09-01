@@ -41,9 +41,12 @@ const config = {
       city: "Miami",
       state: "FL",
       zip: "33145",
-      // OPTIONAL — override the Google Maps query; leave blank to auto-build from address
-      mapsQuery: "",
-    },
+    // OPTIONAL — override the Google Maps query; leave blank to auto-build from address
+    mapsQuery: "",
+    // OPTIONAL — latitude/longitude for more precise Waze links
+    lat: "",
+    lng: "",
+  },
 
     // REQUIRED — hours shown in Location + Footer. Use empty string to omit a day.
     hours: {
@@ -132,6 +135,10 @@ const config = {
         hours: "Hours",
         call: "Call Us",
         directions: "Get Directions",
+        chooseApp: "Open directions in",
+        cancel: "Cancel",
+        copyAddress: "Copy address",
+        addressCopied: "Address copied",
         mapInteract: "Tap to interact with the map",
         closed: "Closed",
         days: {
@@ -211,6 +218,10 @@ const config = {
         hours: "Horario",
         call: "Llámanos",
         directions: "Cómo Llegar",
+        chooseApp: "Abrir direcciones en",
+        cancel: "Cancelar",
+        copyAddress: "Copiar dirección",
+        addressCopied: "Dirección copiada",
         mapInteract: "Toca para interactuar con el mapa",
         closed: "Cerrado",
         days: {
